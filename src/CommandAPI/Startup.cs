@@ -79,6 +79,8 @@ namespace CommandAPI
                 UserID = _configuration["UserID"],
                 Password = _configuration["Password"]
             };
+            
+            // UserID = _configuration["User"] retrieves the username on mac 
 
 
             Console.WriteLine(builder.ConnectionString);

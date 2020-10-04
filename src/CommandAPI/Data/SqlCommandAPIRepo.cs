@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommandAPI.Models;
@@ -14,7 +15,8 @@ namespace CommandAPI.Data
         }
         public bool SaveChanges()
         {
-            throw new System.NotImplementedException();
+            // number of entities affected greater or equal to 0?
+            return _context.SaveChanges() >= 0;
         }
 
         public IEnumerable<Command> GetCommands()
@@ -29,7 +31,12 @@ namespace CommandAPI.Data
 
         public void CreateCommand(Command command)
         {
-            throw new System.NotImplementedException();
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
+            _context.CommandItems.Add(command);
         }
 
         public void UpdateCommand(Command command)

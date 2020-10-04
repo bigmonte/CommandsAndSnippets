@@ -11,6 +11,10 @@ namespace CommandAPI.Profiles
             // Map our source object (Command) to our target object (CommandReadDto)
             
             CreateMap<Command, CommandReadDto>();
+            CreateMap<CommandReadDto, Command >();
+            CreateMap<CommandCreateDto, Command >();
+            CreateMap<Command, CommandCreateDto>();
+            
         }
     }
 }
