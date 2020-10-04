@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3C333FDE-28C1-45B4-B835-25A4CEB10C15}"
+ProjectSection(SolutionItems) = preProject
+	src\README.md = src\README.md
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandAPI", "src\CommandAPI\CommandAPI.csproj", "{00C542E8-4B7B-43CD-83A0-3F754A98BD5A}"
 EndProject

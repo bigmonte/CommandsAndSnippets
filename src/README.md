@@ -1,0 +1,20 @@
+# Command API Solution
+
+Firing up docker with MySQL Server (Microsoft):
+
+```bash
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong@Passw0rd>" \\n   -p 1433:1433 --name sql1 -h sql1 \\n   -d mcr.microsoft.com/mssql/server:2019-latest
+```
+
+Using user secrets:
+(Change the password)
+
+```bash
+dotnet user-secrets set "UserID" "SA"
+dotnet user-secrets set "Password" "<YourStrong@Passw0rd>"
+
+```
+
+Setting Up Automapper
+
+`dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection`
