@@ -4,6 +4,7 @@ using CommandAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using CommandAPI.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CommandAPI.Controllers
 {
@@ -62,6 +63,65 @@ namespace CommandAPI.Controllers
             // https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-3.1
             // https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller.createdatroute
             
+        }
+        
+        // We actually hate this
+        [HttpPut("{id}")]
+        public ActionResult UpdateCommand(int id, CommandUpdateDto commandToUpdate)
+        {
+            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            
+            if (cmdModelFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(commandToUpdate, cmdModelFromRepo);
+            
+            //_apiRepo.UpdateCommand(cmdModelFromRepo);
+
+            _apiRepo.SaveChanges();
+
+            // Return 204 (No Content)
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult PartialCommandUpdate(
+            int id, 
+            JsonPatchDocument<CommandUpdateDto> patchDoc)
+        {
+            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            if (cmdModelFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var cmdToPatch = _mapper.Map<CommandUpdateDto>(cmdModelFromRepo);
+            patchDoc.ApplyTo(cmdToPatch, ModelState);
+
+            if (!TryValidateModel(cmdToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(cmdToPatch, cmdModelFromRepo);
+
+            _apiRepo.UpdateCommand(cmdModelFromRepo);
+
+            _apiRepo.SaveChanges();
+
+            return NoContent();
+            
+            /*            Example patch operation
+             * [
+                    {
+                        "op" : "replace",
+                        "path" : "/howto",
+                        "value": "List all EF migrations"
+                    }
+                ]
+             */
         }
     }
 }

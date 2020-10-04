@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
+using Newtonsoft.Json.Serialization;
 
 /*
 
@@ -81,10 +82,7 @@ namespace CommandAPI
             };
             
             // UserID = _configuration["User"] retrieves the username on mac 
-
-
-            Console.WriteLine(builder.ConnectionString);
-
+            
             services.AddDbContext<CommandContext>(options =>
             {
                 options.UseSqlServer(builder.ConnectionString);
@@ -99,12 +97,17 @@ namespace CommandAPI
     registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
            
             */
-            
-            services.AddControllers();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            
-            services.AddScoped<ICommandAPIRepo, SqlCommandApiRepo>();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(s =>
+                {
+                    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
+            services
+                .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+                .AddScoped<ICommandAPIRepo, SqlCommandApiRepo>();
 
         }
 
@@ -117,9 +120,9 @@ namespace CommandAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-            
-            app.UseEndpoints(endpoints =>
+            app
+                .UseRouting()
+                .UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });

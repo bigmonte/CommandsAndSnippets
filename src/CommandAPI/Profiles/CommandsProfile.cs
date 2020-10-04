@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using AutoMapper;
 using CommandAPI.Dtos;
 using CommandAPI.Models;
@@ -16,7 +14,10 @@ namespace CommandAPI.Profiles
             Type cmdType = typeof(Command);
             Type cmdReadDto = typeof(CommandReadDto);
             Type cmdCreateDto = typeof(CommandCreateDto);
+            Type cmdUpdateDto = typeof(CommandUpdateDto);
 
+            // 1 way mapping
+            TwoWayMapping(cmdType, cmdUpdateDto);
             TwoWayMapping(cmdType, cmdReadDto);
             TwoWayMapping(cmdType, cmdCreateDto);
 

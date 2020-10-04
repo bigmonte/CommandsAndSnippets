@@ -18,3 +18,10 @@ dotnet user-secrets set "Password" "<YourStrong@Passw0rd>"
 Setting Up Automapper
 
 `dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection`
+
+Dependencies for PATCH
+
+```bash
+dotnet add package Microsoft.AspNetCore.JsonPatch
+dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
+```

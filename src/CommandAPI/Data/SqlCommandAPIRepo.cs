@@ -39,10 +39,7 @@ namespace CommandAPI.Data
             _context.CommandItems.Add(command);
         }
 
-        public void UpdateCommand(Command command)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void UpdateCommand(Command command) { }
 
         public void DeleteCommand(Command command)
         {
