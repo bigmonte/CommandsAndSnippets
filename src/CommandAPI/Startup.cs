@@ -1,8 +1,10 @@
 
+using System;
 using CommandAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,11 +51,8 @@ namespace CommandAPI
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration config)
-        {
-            _configuration = config;
-        }
-        
+        public Startup(IConfiguration config) => _configuration = config;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application,
         // visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -72,12 +71,20 @@ namespace CommandAPI
              More resources:
              https://devblogs.microsoft.com/cesardelatorre/comparing-asp-net-core-ioc-service-life-times-and-autofac-ioc-instance-scopes/
              */
-            
-            
+
+            var builder = new SqlConnectionStringBuilder
+            {
+                ConnectionString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;",
+                UserID = _configuration["UserID"],
+                Password = _configuration["Password"]
+            };
+
+
+            Console.WriteLine(builder.ConnectionString);
+
             services.AddDbContext<CommandContext>(options =>
             {
-                var connectionString = _configuration.GetConnectionString("CommandsDataContext");
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(builder.ConnectionString);
               
             });
             
