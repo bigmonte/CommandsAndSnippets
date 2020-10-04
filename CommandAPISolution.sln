@@ -11,6 +11,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandAPI", "src\CommandAPI\CommandAPI.csproj", "{00C542E8-4B7B-43CD-83A0-3F754A98BD5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D99C7832-895E-4B7B-935B-5EE73AABF298}"
+ProjectSection(SolutionItems) = preProject
+	test\README.md = test\README.md
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandAPI.Tests", "test\CommandAPI.Tests\CommandAPI.Tests.csproj", "{ABA4FBA0-02B3-4F43-8592-5A88B023FEEF}"
 EndProject

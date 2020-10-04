@@ -123,5 +123,19 @@ namespace CommandAPI.Controllers
                 ]
              */
         }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCommand(int id)
+        {
+            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            if (cmdModelFromRepo == null)
+            {
+                return NotFound();
+            }
+            _apiRepo.DeleteCommand(cmdModelFromRepo);
+            _apiRepo.SaveChanges();
+
+            return NoContent();
+        }
     }
 }
