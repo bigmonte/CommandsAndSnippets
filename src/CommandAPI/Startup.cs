@@ -1,7 +1,9 @@
 
 using CommandAPI.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -45,19 +47,19 @@ namespace CommandAPI
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration config)
+        {
+            _configuration = config;
+        }
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application,
         // visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            /*
-                1. Register services to enable the use of "Controllers" throughout our application.
-                
-                2. We "MapControllers" to our endpoints. This means we make use of the Controller services,
-                registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
-            */
-            
-            services.AddControllers();
+
             
             /*                    Service Lifetimes
              
@@ -71,7 +73,27 @@ namespace CommandAPI
              https://devblogs.microsoft.com/cesardelatorre/comparing-asp-net-core-ioc-service-life-times-and-autofac-ioc-instance-scopes/
              */
             
-            services.AddScoped<ICommandAPIRepo, MockCommandAPIRepo>();
+            
+            services.AddDbContext<CommandContext>(options =>
+            {
+                var connectionString = _configuration.GetConnectionString("CommandsDataContext");
+                options.UseSqlServer(connectionString);
+              
+            });
+            
+            /*
+             
+    1. Register services to enable the use of "Controllers" throughout our application.
+    
+    2. We "MapControllers" to our endpoints. This means we make use of the Controller services,
+    registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
+           
+            */
+            
+            services.AddControllers();
+            
+            services.AddScoped<ICommandAPIRepo, SqlCommandApiRepo>();
+
         }
 
         // This method gets called by the runtime.
