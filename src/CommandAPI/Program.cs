@@ -18,17 +18,6 @@ namespace CommandAPI
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
-
-            using (var db = new CommandContext(options: new DbContextOptions<CommandContext>()))
-            {
-                var cmd = new Command();
-                cmd.Id = 12;
-                cmd.Platform = "platform";
-                cmd.CommandLine = "Something";
-                cmd.HowTo = "How To";
-                db.CommandItems.Add(cmd);
-                db.SaveChanges();
-            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

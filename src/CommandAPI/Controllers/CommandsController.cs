@@ -29,7 +29,7 @@ namespace CommandAPI.Controllers
             var commandItems = _apiRepo.GetCommands();
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
         }
-
+        
         [HttpGet("{id}", Name = "GetCommandById")]
         public ActionResult<CommandReadDto> GetCommandById(int id)
         {

@@ -54,14 +54,23 @@ namespace CommandAPI
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration config) => _configuration = config;
-
+        private readonly string _allowSpecificOrigins = "_allowSpecificOrigins";
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application,
         // visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
 
-            
+            services.AddCors(options =>
+        {
+            options.AddPolicy(name: _allowSpecificOrigins,
+                              builder =>
+                              {
+                                  builder.WithOrigins("http://localhost:8080",
+                                                      "http://127.0.0.1:8080");
+                              });
+        });
+
             /*                    Service Lifetimes
              
              AddTransient        A service is created each time it is requested from the Service container
@@ -120,8 +129,12 @@ namespace CommandAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            // Cors documentation
+            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
+
             app
                 .UseRouting()
+                .UseCors(_allowSpecificOrigins)
                 .UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

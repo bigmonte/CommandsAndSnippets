@@ -24,6 +24,24 @@ namespace CommandAPI.Tests
             _configuration = new MapperConfiguration( cfg => cfg.AddProfile(_realProfile));
             _mapper = new Mapper(_configuration);
         }
+        
+        private List<Command> GetCommands(int num)
+        {
+            var commands = new List<Command>();
+
+            for (int i = 0; i < num; i++)
+            {
+                commands.Add( new Command
+                {
+                    Id = 0,
+                    HowTo = "How to generate migration",
+                    CommandLine = "dotnet ef migrations add <Name of Migration>",
+                    Platform = ".Net Core EF"
+                });
+            }
+
+            return commands;
+        }
 
         [Fact]
         public void GetCommands_ReturnsZeroItems_WhenDBIsEmpty()
@@ -43,24 +61,26 @@ namespace CommandAPI.Tests
             Assert.IsType<OkObjectResult>(result.Result);
 
         }
-
-        private List<Command> GetCommands(int num)
+        [Fact]
+        public void GetCommands_Returns200OK_WhenDBHasOneResource()
         {
-            var commands = new List<Command>();
+            // Arrange
+            
+            _mockApiRepo.Setup(repo => 
+                repo.GetCommands()).Returns(GetCommands(1));
+            
+            var controller = new CommandsController(_mockApiRepo.Object, _mapper);
+            
+            // Act
 
-            for (int i = 0; i < num; i++)
-            {
-                commands.Add( new Command
-                {
-                    Id = 0,
-                    HowTo = "How to generate migration",
-                    CommandLine = "dotnet ef migrations add <Name of Migration>",
-                    Platform = ".Net Core EF"
-                });
-            }
+            var result = controller.GetCommands();
+            
+            // Assert
+            Assert.IsType<OkObjectResult>(result.Result);
 
-            return commands;
         }
+        
+
 
         [Fact]
         public void GetCommands_ReturnsOneItem_WhenDBHasOneResource()
@@ -82,7 +102,39 @@ namespace CommandAPI.Tests
             Assert.Single(commands);
         }
         
+        [Fact]
+        public void GetCommandById_Returns404NotFound_WhenNonExistentIDProvided()
+        {
+            // Arrange
+            _mockApiRepo.Setup(repo => repo.GetCommandById(0)).Returns(() => null);
+            var controller = new CommandsController(_mockApiRepo.Object, _mapper);
+            
+            // Act 
+            var result = controller.GetCommandById(1);
+            
+            // Assert
 
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+        
+        
+        [Fact]
+        public void GetCommandById_Returns200OK_WhenValidIDProvided()
+        {
+            // Arrange
+            _mockApiRepo.Setup(repo => repo.GetCommandById(0)).Returns(
+                new Command {Id = 1, HowTo = "Mock", Platform = "MockPL", CommandLine = "Mock"});
+            var controller = new CommandsController(_mockApiRepo.Object, _mapper);
+            
+            // Act 
+            var result = controller.GetCommandById(1);
+            
+            // Assert
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+        
+        
         public void Dispose()
         {
             _mockApiRepo = null;
