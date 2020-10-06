@@ -20,8 +20,7 @@ steps:
   displayName: 'dotnet build $(buildconfiguration)'
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test'
-
-inputs:
-    command: test
-    projects: '**/*Tests/*.csproj'
-    testRunTitle: 'xUnit Test Run'
+  inputs:
+      command: test
+      projects: '**/*Tests/*.csproj'
+      testRunTitle: 'xUnit Test Run'
