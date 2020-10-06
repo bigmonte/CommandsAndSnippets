@@ -83,7 +83,17 @@ namespace CommandAPI.Controllers
             _apiRepo.SaveChanges();
 
             // Return 204 (No Content)
-            return NoContent();
+            //return NoContent();
+            var cmd = new CommandReadDto{
+                Id = id,
+                HowTo = commandToUpdate.HowTo,
+                CommandLine = commandToUpdate.CommandLine,
+                Platform = commandToUpdate.Platform
+            };
+
+            // Return updated Resource
+            return Ok(_mapper.Map<CommandReadDto>(cmd));
+
         }
 
         [HttpPatch("{id}")]
