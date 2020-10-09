@@ -21,7 +21,6 @@ namespace CommandAPI.Controllers
 
         
         [HttpGet("platform/{platform}", Name = "CommandsWithPlatform")]
-
         public ActionResult<IEnumerable<CommandReadDto>> CommandsWithPlatform(string platform)
         {
             var commandsWithPlatform = _apiRepo.GetCommandsWithPlatform(platform);

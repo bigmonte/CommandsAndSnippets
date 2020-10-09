@@ -92,7 +92,7 @@ namespace CommandAPI
             
             // UserID = _configuration["User"] retrieves the username on mac 
             
-            services.AddDbContext<CommandContext>(options =>
+            services.AddDbContext<DBContext>(options =>
             {
                 options.UseSqlServer(builder.ConnectionString);
               
@@ -116,7 +116,9 @@ namespace CommandAPI
 
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-                .AddScoped<ICommandAPIRepo, SqlCommandApiRepo>();
+                .AddScoped<ICommandAPIRepo, APIRepo>()
+                .AddScoped<ISnippetsAPIRepo, APIRepo>();
+
 
         }
 

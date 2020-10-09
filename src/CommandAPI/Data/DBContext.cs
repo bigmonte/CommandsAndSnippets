@@ -3,14 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandAPI.Data
 {
-    public class CommandContext : DbContext
+    public class DBContext : DbContext
     {
-        
-        public CommandContext(DbContextOptions<CommandContext> options) : base(options)
+        public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
             Database.EnsureCreated();
         }
 
         public DbSet<Command> CommandItems { get; set; }
+        public DbSet<Snippet> SnippetItems { get; set; }
+        
     }
 }

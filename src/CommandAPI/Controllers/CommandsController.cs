@@ -13,28 +13,28 @@ namespace CommandAPI.Controllers
     
     public class CommandsController : ControllerBase
     {
-        private readonly ICommandAPIRepo _apiRepo;
+        private readonly ICommandAPIRepo _commandsRepo;
         private readonly IMapper _mapper;
         
         
         // Constructor dependency injection
-        public CommandsController(ICommandAPIRepo apiRepo, IMapper mapper)
+        public CommandsController(ICommandAPIRepo commandsRepo, IMapper mapper)
         {
-            _apiRepo = apiRepo;
+            _commandsRepo = commandsRepo;
             _mapper = mapper;
         }
         
         [HttpGet]   
         public ActionResult<IEnumerable<CommandReadDto>> GetCommands()
         {
-            var commandItems = _apiRepo.GetCommands();
+            var commandItems = _commandsRepo.GetCommands();
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
         }
         
         [HttpGet("{id}", Name = "GetCommandById")]
         public ActionResult<CommandReadDto> GetCommandById(int id)
         {
-            var commandItem = _apiRepo.GetCommandById(id);
+            var commandItem = _commandsRepo.GetCommandById(id);
             if (commandItem == null)
             {
                 return NotFound();
@@ -47,8 +47,8 @@ namespace CommandAPI.Controllers
         public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandToCreate)
         {
             var cmdModel = _mapper.Map<Command>(commandToCreate);
-            _apiRepo.CreateCommand(cmdModel);
-            _apiRepo.SaveChanges();
+            _commandsRepo.CreateCommand(cmdModel);
+            _commandsRepo.SaveCommandsChanges();
 
             var cmdReadDto = _mapper.Map<CommandReadDto>(cmdModel);
 
@@ -70,7 +70,7 @@ namespace CommandAPI.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateCommand(int id, CommandUpdateDto commandToUpdate)
         {
-            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            var cmdModelFromRepo = _commandsRepo.GetCommandById(id);
             
             if (cmdModelFromRepo == null)
             {
@@ -81,7 +81,7 @@ namespace CommandAPI.Controllers
             
             //_apiRepo.UpdateCommand(cmdModelFromRepo);
 
-            _apiRepo.SaveChanges();
+            _commandsRepo.SaveCommandsChanges();
 
             // Return 204 (No Content)
             //return NoContent();
@@ -102,7 +102,7 @@ namespace CommandAPI.Controllers
             int id, 
             JsonPatchDocument<CommandUpdateDto> patchDoc)
         {
-            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            var cmdModelFromRepo = _commandsRepo.GetCommandById(id);
             if (cmdModelFromRepo == null)
             {
                 return NotFound();
@@ -118,9 +118,9 @@ namespace CommandAPI.Controllers
 
             _mapper.Map(cmdToPatch, cmdModelFromRepo);
 
-            _apiRepo.UpdateCommand(cmdModelFromRepo);
+            _commandsRepo.UpdateCommand(cmdModelFromRepo);
 
-            _apiRepo.SaveChanges();
+            _commandsRepo.SaveCommandsChanges();
 
             return NoContent();
             
@@ -138,13 +138,13 @@ namespace CommandAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteCommand(int id)
         {
-            var cmdModelFromRepo = _apiRepo.GetCommandById(id);
+            var cmdModelFromRepo = _commandsRepo.GetCommandById(id);
             if (cmdModelFromRepo == null)
             {
                 return NotFound();
             }
-            _apiRepo.DeleteCommand(cmdModelFromRepo);
-            _apiRepo.SaveChanges();
+            _commandsRepo.DeleteCommand(cmdModelFromRepo);
+            _commandsRepo.SaveCommandsChanges();
 
             return NoContent();
         }

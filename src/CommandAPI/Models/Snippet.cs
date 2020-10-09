@@ -2,8 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CommandAPI.Models
 {
+    // TODO?
+    // Try use inheritance instead? (there's some caviats)
+    // https://docs.microsoft.com/en-us/ef/core/modeling/inheritance
+
     // TODO: Modified Records
-    public class Command
+    
+    public class Snippet
     {
         [Key]
         [Required]
@@ -17,6 +22,6 @@ namespace CommandAPI.Models
         public string Platform { get; set; }
         
         [Required]
-        public string CommandLine { get; set; }
+        public string CodeSnippet { get; set; }
     }
 }

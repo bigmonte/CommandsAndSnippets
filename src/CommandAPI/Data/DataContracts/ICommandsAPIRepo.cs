@@ -7,7 +7,7 @@ namespace CommandAPI.Data
     
     public interface ICommandAPIRepo
     {
-        bool SaveChanges();
+        bool SaveCommandsChanges();
         IEnumerable<Command> GetCommands();
         IEnumerable<Command> GetCommandsWithPlatform(string platform);
         Command GetCommandById(int id);
