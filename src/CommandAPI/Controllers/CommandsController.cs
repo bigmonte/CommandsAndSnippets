@@ -23,6 +23,7 @@ namespace CommandAPI.Controllers
             _apiRepo = apiRepo;
             _mapper = mapper;
         }
+        
         [HttpGet]   
         public ActionResult<IEnumerable<CommandReadDto>> GetCommands()
         {

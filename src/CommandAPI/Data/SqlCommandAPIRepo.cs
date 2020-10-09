@@ -8,7 +8,7 @@ namespace CommandAPI.Data
     public class SqlCommandApiRepo : ICommandAPIRepo
     {
         private readonly CommandContext _context;
-
+        
         public SqlCommandApiRepo(CommandContext context)
         {
             _context = context;
@@ -37,6 +37,15 @@ namespace CommandAPI.Data
             }
 
             _context.CommandItems.Add(command);
+        }
+        
+        public IEnumerable<Command> GetCommandsWithPlatform(string platform)
+        {
+            var query = from c in GetCommands()
+                where c.Platform == "Entity Framework CLI"
+                select c;
+
+            return query;
         }
 
         public void UpdateCommand(Command command) { }

@@ -9,6 +9,7 @@ namespace CommandAPI.Data
     {
         bool SaveChanges();
         IEnumerable<Command> GetCommands();
+        IEnumerable<Command> GetCommandsWithPlatform(string platform);
         Command GetCommandById(int id);
         void CreateCommand (Command command);
         void UpdateCommand(Command command);
