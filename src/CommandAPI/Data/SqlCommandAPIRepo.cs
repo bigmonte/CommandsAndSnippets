@@ -42,7 +42,7 @@ namespace CommandAPI.Data
         public IEnumerable<Command> GetCommandsWithPlatform(string platform)
         {
             var query = from c in GetCommands()
-                where c.Platform == "Entity Framework CLI"
+                where c.Platform == platform
                 select c;
 
             return query;
