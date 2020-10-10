@@ -1,11 +1,5 @@
-# Commands and Snippets
+# Command API Solution
 
-## Description:
-
-An REST API that provides useful commands and snippets.
-
-
----------------
 Firing up docker with SQL Server (Microsoft):
 
 ```bash
@@ -25,7 +19,7 @@ Setting Up Automapper
 
 `dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection`
 
-Dependencies for PATCH Request
+Dependencies for PATCH
 
 ```bash
 dotnet add package Microsoft.AspNetCore.JsonPatch
