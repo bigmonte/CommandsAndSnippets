@@ -52,8 +52,12 @@ namespace CommandsAndSnippetsAPI.Data
 
         public void DeleteCommand(Command command)
         {
-            // TODO: make me 
-            throw new System.NotImplementedException();
+            if(command == null)
+            {
+              throw new ArgumentNullException(nameof(command));
+            }
+
+            _dbContext.CommandItems.Remove(command);
         }
 
         public bool SaveSnippetsChanges()

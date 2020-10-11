@@ -90,7 +90,10 @@ namespace CommandsAndSnippetsAPI.Controllers
                 HowTo = commandToUpdate.HowTo,
                 CommandLine = commandToUpdate.CommandLine,
                 Platform = commandToUpdate.Platform
-            };
+            }; 
+            
+            // create a new ReadDTO Because we want the ID?
+            // TODO fix that 
 
             // Return updated Resource
             return Ok(_mapper.Map<CommandReadDto>(cmd));
@@ -146,7 +149,10 @@ namespace CommandsAndSnippetsAPI.Controllers
             _commandsRepo.DeleteCommand(cmdModelFromRepo);
             _commandsRepo.SaveCommandsChanges();
 
-            return NoContent();
+            // return NoContent();
+
+            // OR return the deleted command to our frontend
+            return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
         }
     }
 }
