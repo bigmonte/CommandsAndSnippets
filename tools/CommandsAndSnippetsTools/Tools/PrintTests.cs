@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using CommandsAndSnippetsAPI.Data;
 
-namespace CommandsAndSnippetsTools
+namespace CommandsAndSnippetsTools.Tools
 {
     public class PrintTests
     {
