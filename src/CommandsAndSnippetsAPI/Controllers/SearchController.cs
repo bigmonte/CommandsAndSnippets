@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CommandsAndSnippetsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/commands/[controller]")]
     [ApiController]
     public class SearchController: ControllerBase
     {
