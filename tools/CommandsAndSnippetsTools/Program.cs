@@ -1,23 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommandsAndSnippetsTools.XmlTools;
 using CommandsAndSnippetsTools.Tools;
 
 namespace CommandsAndSnippetsTools
 {
-    internal class Program
+    internal sealed class Program
     {
-        private enum RegisteredArgs { XmlCommandsDump, Print}
+        private enum RegisteredArgs
+        {
+            XmlCommandsDump,
+            Print,
+            ReadXmlData,
+            Reflection
+        }
+
         private static void Main(string[] args)
         {
             Dictionary<RegisteredArgs, string> registeredArgs = new Dictionary<RegisteredArgs, string>
             {
-                {RegisteredArgs.XmlCommandsDump, "xml-cmds-dump"},
-                {RegisteredArgs.Print, "print"}
-
+                {RegisteredArgs.XmlCommandsDump, "xml-dump"},
+                {RegisteredArgs.Print, "print"},
+                {RegisteredArgs.ReadXmlData, "read-xml"},
+                {RegisteredArgs.Reflection, "reflection"}
             };
-            
-            var hasRegisteredArg = hasValidArgument(args, registeredArgs);
+
+            var hasRegisteredArg = HasValidArgument(args, registeredArgs);
 
             if (!hasRegisteredArg)
             {
@@ -37,15 +46,31 @@ namespace CommandsAndSnippetsTools
                 GenerateXmlDump();
                 return;
             }
-            
+
             if (args[0] == registeredArgs[RegisteredArgs.Print]) PrintTests();
 
+            if (args[0] == registeredArgs[RegisteredArgs.ReadXmlData])
+            {
+                var xmlTests = new XmlTests();
+                Console.WriteLine($"{nameof(xmlTests.ReadXmlData)} ↓");
+                xmlTests.ReadXmlData();
+
+                Console.WriteLine($"{nameof(xmlTests.ReadXmlDataAnonymousObj)} ↓");
+                xmlTests.ReadXmlDataAnonymousObj();
+            }
+
+            if (args[0] == registeredArgs[RegisteredArgs.Reflection])
+            {
+                var reflection = new ReflectionTests();
+                reflection.ReadCommandProperties();
+            }
         }
 
         private static void GenerateXmlDump(string path = "")
         {
             var generator = new XmlDumpTool();
-            generator.CommandsDump(path);
+            generator.DumpCommands(path);
+            generator.DumpCommandsWithEfPlatform(path);
         }
 
         private static void PrintTests()
@@ -60,18 +85,21 @@ namespace CommandsAndSnippetsTools
             Console.WriteLine($"{nameof(printTests.PrintResultsWithEfPlatform)} ↓");
             printTests.PrintResultsWithEfPlatform();
         }
-        
+
         private static void PrintHelp()
         {
             Console.WriteLine("Command                                 |   Description");
             Console.WriteLine();
-            Console.WriteLine("dotnet run xml-cmds-dump <full-path>    |   Generate Commands XML Dump");
+            Console.WriteLine("dotnet run xml-dump <full-path>         |   Generate Commands XML Dumps from database");
             Console.WriteLine("dotnet print                            |   Print tests");
+            Console.WriteLine("dotnet read-xml                         |   Print XML Tests");
+            Console.WriteLine("dotnet reflection                       |   Print Reflection Tests");
         }
-        private static bool hasValidArgument(string[] args, Dictionary<RegisteredArgs, string> registeredArgs)
+
+        private static bool HasValidArgument(string[] args, Dictionary<RegisteredArgs, string> registeredArgs)
         {
             bool hasRegisteredArg = false;
-            
+
             foreach (var registeredArg in registeredArgs.Values)
             {
                 if (args.Any(arg => arg == registeredArg))
@@ -82,6 +110,5 @@ namespace CommandsAndSnippetsTools
 
             return hasRegisteredArg;
         }
-
     }
 }
