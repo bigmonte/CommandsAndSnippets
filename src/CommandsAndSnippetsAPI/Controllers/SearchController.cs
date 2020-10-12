@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Dtos;
@@ -25,6 +26,14 @@ namespace CommandsAndSnippetsAPI.Controllers
         {
             var commandsWithPlatform = _apiRepo.GetCommandsWithPlatform(platform);
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandsWithPlatform));
+        }
+        
+        
+        [HttpGet("{text}")]
+        public ActionResult<IEnumerable<CommandReadDto>> SearchCommand(string text)
+        {
+            var searchResult = _apiRepo.SearchCommands(text);
+            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(searchResult));
         }
 
     }

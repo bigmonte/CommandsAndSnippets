@@ -10,6 +10,8 @@ namespace CommandsAndSnippetsAPI.Data
         bool SaveCommandsChanges();
         IEnumerable<Command> GetCommands();
         IEnumerable<Command> GetCommandsWithPlatform(string platform);
+        IEnumerable<Command> SearchCommands(string text);
+
         Command GetCommandById(int id);
         void CreateCommand (Command command);
         void UpdateCommand(Command command);

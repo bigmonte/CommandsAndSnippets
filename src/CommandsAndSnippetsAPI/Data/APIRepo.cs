@@ -47,7 +47,21 @@ namespace CommandsAndSnippetsAPI.Data
 
             return query;
         }
-
+        
+        public IEnumerable<Command> SearchCommands(string text)
+        {
+            // TODO: avoid creating unnecessary copies
+            
+            var q =
+                from d in GetCommands()
+                where d.Platform.ToLower().Contains(text.ToLower())
+                      || d.CommandLine.ToLower().Contains(text.ToLower())
+                      || d.HowTo.ToLower().Contains(text.ToLower())
+                select d;
+            
+            return q;
+        }
+        
         public void UpdateCommand(Command command) { /* nothing here */ }
 
         public void DeleteCommand(Command command)

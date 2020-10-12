@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -154,5 +155,6 @@ namespace CommandsAndSnippetsAPI.Controllers
             // OR return the deleted command to our frontend
             return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
         }
+
     }
 }
