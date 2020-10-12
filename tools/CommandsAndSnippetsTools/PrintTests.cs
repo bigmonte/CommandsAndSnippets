@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using CommandsAndSnippetsAPI.Data;
-using CommandsAndSnippetsAPI.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsTools
 {
@@ -18,7 +16,6 @@ namespace CommandsAndSnippetsTools
         public void PrintFirstItem()
         {
             Console.WriteLine($"{_dbContext.CommandItems.First()?.Platform}");
-
         }
 
         public void PrintResultsWithEfPlatform()
@@ -26,13 +23,11 @@ namespace CommandsAndSnippetsTools
             var query = from c in _dbContext.CommandItems // LINQ to Objects
                 where c.Platform == "Entity Framework CLI"
                 select c;
-            
+
             foreach (var command in query)
-            {
                 Console.WriteLine($"Platform: {command.Platform}, " +
                                   $"How To: {command.HowTo}, " +
                                   $"Command: {command.CommandLine}");
-            }
         }
     }
 }

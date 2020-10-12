@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using CommandsAndSnippetsAPI.Data;
@@ -17,13 +16,13 @@ namespace CommandsAndSnippetsTools
         public void Generate()
         {
             // Pretty much equivalent to the for/foreach iteration in _dbContext.CommandItems
-            
+
             var xElements = _dbContext.CommandItems
                 .Select(
-                    cmd => new XElement("Command", 
-                        new XAttribute(nameof(cmd.Id), cmd.Id), 
-                        new XAttribute(nameof(cmd.Platform), cmd.Platform), 
-                        new XAttribute(nameof(cmd.HowTo), cmd.HowTo), 
+                    cmd => new XElement("Command",
+                        new XAttribute(nameof(cmd.Id), cmd.Id),
+                        new XAttribute(nameof(cmd.Platform), cmd.Platform),
+                        new XAttribute(nameof(cmd.HowTo), cmd.HowTo),
                         new XAttribute(nameof(cmd.CommandLine), cmd.CommandLine))).ToList();
 
 
