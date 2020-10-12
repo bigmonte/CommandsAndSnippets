@@ -88,12 +88,16 @@ namespace CommandsAndSnippetsTools
 
         private static void PrintHelp()
         {
-            Console.WriteLine("Command                                 |   Description");
-            Console.WriteLine();
-            Console.WriteLine("dotnet run xml-dump <full-path>         |   Generate Commands XML Dumps from database");
-            Console.WriteLine("dotnet print                            |   Print tests");
-            Console.WriteLine("dotnet read-xml                         |   Print XML Tests");
-            Console.WriteLine("dotnet reflection                       |   Print Reflection Tests");
+            Console.WriteLine("Commands And Snippets Tools");
+            Console.WriteLine("********************************************************************************");
+            Console.WriteLine("Arguments                        |   Description");
+            Console.WriteLine("--------------------------------------------------------------------------------");
+            Console.WriteLine("xml-dump <optional-full-path>    |   Generate Commands XML Dumps from database");
+            Console.WriteLine("print                            |   Print tests");
+            Console.WriteLine("read-xml                         |   Print XML Tests");
+            Console.WriteLine("reflection                       |   Print Reflection Tests");
+            Console.WriteLine("********************************************************************************");
+            Console.WriteLine("Please provide an valid argument!");
         }
 
         private static bool HasValidArgument(string[] args, Dictionary<RegisteredArgs, string> registeredArgs)
