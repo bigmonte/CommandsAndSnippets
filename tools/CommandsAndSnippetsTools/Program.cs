@@ -10,18 +10,47 @@ namespace CommandsAndSnippetsTools
     {
         static void Main(string[] args)
         {
-            // TODO use secrets
-            
-            string conString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;User=SA;Password=<YourStrong@Passw0rd>;";
-
-            var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            
-            optionsBuilder.UseSqlServer(conString);
-
-            using (var context = new DBContext(optionsBuilder.Options))
+            if (args.Length == 0)
             {
-                Console.WriteLine($"{context.CommandItems.First()?.Platform}");
+                System.Console.WriteLine("Help: ");
+                System.Console.WriteLine("Command                 Description");
+                System.Console.WriteLine("--------------------|--------------");
+                System.Console.WriteLine("dotnet run xml-dump |   Generate Commands XML Dump");
+                System.Console.WriteLine("dotnet print        |   Print tests");
+
             }
+            
+            foreach (var arg in args)
+            {
+                if (arg == "xml-dump")
+                {
+                    GenerateXmlDump();
+                }
+
+                if (arg == "print" || arg == "print-tests")
+                {
+                    PrintTests();
+                }
+            }
+        }
+
+        static void GenerateXmlDump()
+        {
+            var generator = new GenerateXmlFromDb();
+            generator.Generate();
+        }
+        
+        static void PrintTests()
+        {
+            PrintTests printTests = new PrintTests();
+            
+            Console.WriteLine($"{nameof(printTests.PrintFirstItem)} ↓");
+            printTests.PrintFirstItem();
+            
+            Console.WriteLine("");
+            
+            Console.WriteLine($"{nameof(printTests.PrintResultsWithEfPlatform)} ↓");
+            printTests.PrintResultsWithEfPlatform();
         }
 
 
