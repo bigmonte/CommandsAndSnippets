@@ -8,19 +8,21 @@ namespace CommandsAndSnippetsTools
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Help: ");
-                Console.WriteLine("Command                 Description");
+                Console.WriteLine("Command             |   Description");
                 Console.WriteLine("--------------------|--------------");
                 Console.WriteLine("dotnet run xml-dump |   Generate Commands XML Dump");
                 Console.WriteLine("dotnet print        |   Print tests");
+                return;
             }
-
-            foreach (var arg in args)
+            
+            if (args[0] == "xml-dump")
             {
-                if (arg == "xml-dump") GenerateXmlDump();
-
-                if (arg == "print" || arg == "print-tests") PrintTests();
+                GenerateXmlDump();
+                return;
             }
+            
+            if (args[0] == "print" || args[0] == "print-tests") PrintTests();
+
         }
 
         private static void GenerateXmlDump()
