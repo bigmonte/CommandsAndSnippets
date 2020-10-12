@@ -1,22 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CommandsAndSnippetsTools.Tools;
 
 namespace CommandsAndSnippetsTools
 {
     internal class Program
     {
+        private enum RegisteredArgs { XmlCommandsDump, Print}
         private static void Main(string[] args)
         {
-            if (args.Length == 0)
+            Dictionary<RegisteredArgs, string> registeredArgs = new Dictionary<RegisteredArgs, string>
             {
-                Console.WriteLine("Command                                 |   Description");
-                Console.WriteLine();
-                Console.WriteLine("dotnet run xml-cmds-dump <full-path>    |   Generate Commands XML Dump");
-                Console.WriteLine("dotnet print                            |   Print tests");
+                {RegisteredArgs.XmlCommandsDump, "xml-cmds-dump"},
+                {RegisteredArgs.Print, "print"}
+
+            };
+            
+            var hasRegisteredArg = hasValidArgument(args, registeredArgs);
+
+            if (!hasRegisteredArg)
+            {
+                PrintHelp();
                 return;
             }
-            
-            if (args[0] == "xml-dump")
+
+            if (args[0] == registeredArgs[RegisteredArgs.XmlCommandsDump])
             {
                 if (args.Length > 1)
                 {
@@ -29,7 +38,7 @@ namespace CommandsAndSnippetsTools
                 return;
             }
             
-            if (args[0] == "print" || args[0] == "print-tests") PrintTests();
+            if (args[0] == registeredArgs[RegisteredArgs.Print]) PrintTests();
 
         }
 
@@ -51,5 +60,28 @@ namespace CommandsAndSnippetsTools
             Console.WriteLine($"{nameof(printTests.PrintResultsWithEfPlatform)} ↓");
             printTests.PrintResultsWithEfPlatform();
         }
+        
+        private static void PrintHelp()
+        {
+            Console.WriteLine("Command                                 |   Description");
+            Console.WriteLine();
+            Console.WriteLine("dotnet run xml-cmds-dump <full-path>    |   Generate Commands XML Dump");
+            Console.WriteLine("dotnet print                            |   Print tests");
+        }
+        private static bool hasValidArgument(string[] args, Dictionary<RegisteredArgs, string> registeredArgs)
+        {
+            bool hasRegisteredArg = false;
+            
+            foreach (var registeredArg in registeredArgs.Values)
+            {
+                if (args.Any(arg => arg == registeredArg))
+                {
+                    hasRegisteredArg = true;
+                }
+            }
+
+            return hasRegisteredArg;
+        }
+
     }
 }

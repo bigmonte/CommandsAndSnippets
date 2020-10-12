@@ -40,14 +40,31 @@ namespace CommandsAndSnippetsTools.Tools
             
             if (string.IsNullOrEmpty(path))
             {
+                var defaultPath = $@"{projectPath}/XmlDumps";
+                var filePath = $"{defaultPath}/Commands.xml";
+                
                 // @"Commands.xml" Will be saved to bin/Commands.xml
-                commandDump.Save($@"{projectPath}/XmlDumps/Commands.xml");
+                if (Directory.Exists(defaultPath))
+                {
+                    commandDump.Save(filePath);
+                }
+                else
+                {
+                    Directory.CreateDirectory(defaultPath);
+                    commandDump.Save(filePath);
+                }
+                
+                Console.WriteLine($"Xml dumped to: {filePath}");
                 return;
             }
+
+            // When a path was provided
             
-            commandDump.Save($@"{path}/Commands.xml");
+            string givenPathFile = $@"{path}/Commands.xml";
+            commandDump.Save(givenPathFile);
+            Console.WriteLine($"Xml dumped to: {givenPathFile}");
+
             
-            System.Console.WriteLine("[+] XML Dump - Done");
         }
     }
 }

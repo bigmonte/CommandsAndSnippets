@@ -18,4 +18,8 @@
     <ProjectReference Include="..\..\src\CommandsAndSnippetsAPI\CommandsAndSnippetsAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="XmlDumps" />
+  </ItemGroup>
+
 </Project>
