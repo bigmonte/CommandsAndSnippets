@@ -6,7 +6,8 @@ namespace CommandsAndSnippetsTools
     {
         private static void Main(string[] args)
         {
-            if (args.Length == 0)
+            GenerateXmlDump();
+            /*if (args.Length == 0)
             {
                 Console.WriteLine("Command             |   Description");
                 Console.WriteLine("--------------------|--------------");
@@ -21,7 +22,7 @@ namespace CommandsAndSnippetsTools
                 return;
             }
             
-            if (args[0] == "print" || args[0] == "print-tests") PrintTests();
+            if (args[0] == "print" || args[0] == "print-tests") PrintTests();*/
 
         }
 

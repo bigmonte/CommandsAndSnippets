@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using CommandsAndSnippetsAPI.Data;
@@ -15,15 +16,19 @@ namespace CommandsAndSnippetsTools
 
         public void Generate()
         {
-            // Pretty much equivalent to the for/foreach iteration in _dbContext.CommandItems
-
-            var xElements = _dbContext.CommandItems
-                .Select(
-                    cmd => new XElement("Command",
-                        new XAttribute(nameof(cmd.Id), cmd.Id),
-                        new XAttribute(nameof(cmd.Platform), cmd.Platform),
-                        new XAttribute(nameof(cmd.HowTo), cmd.HowTo),
-                        new XAttribute(nameof(cmd.CommandLine), cmd.CommandLine))).ToList();
+            var commands = _dbContext.CommandItems;
+            var xElements = new List<XElement>();
+            
+            // https://docs.microsoft.com/en-gb/ef/core/querying/how-query-works
+            
+            foreach (var cmd in commands)
+            {
+                xElements.Add(new XElement("Command",
+                    new XAttribute(nameof(cmd.Id), cmd.Id),
+                    new XAttribute(nameof(cmd.Platform), cmd.Platform),
+                    new XAttribute(nameof(cmd.HowTo), cmd.HowTo),
+                    new XAttribute(nameof(cmd.CommandLine), cmd.CommandLine)));
+            }
 
 
             var commandDump = new XDocument(new XDeclaration("1.0",
