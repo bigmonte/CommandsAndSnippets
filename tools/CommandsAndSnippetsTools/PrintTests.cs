@@ -15,11 +15,14 @@ namespace CommandsAndSnippetsTools.Tools
 
         public void PrintFirstItem()
         {
+            Console.WriteLine("Going to print first item...");
             Console.WriteLine($"{_dbContext.CommandItems.First()?.Platform}");
         }
 
         public void PrintResultsWithEfPlatform()
         {
+            Console.WriteLine("Commands with Entity Framework platform...");
+
             var query = from c in _dbContext.CommandItems // LINQ to Objects
                 where c.Platform == "Entity Framework CLI"
                 select c;

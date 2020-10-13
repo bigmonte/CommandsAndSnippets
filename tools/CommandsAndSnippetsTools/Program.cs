@@ -14,26 +14,44 @@ namespace CommandsAndSnippetsTools
             Print,
             ReadXmlData,
             Reflection,
-            Json
+            Json,
+            Other
+        }
+        
+        private static void ProgramHelp()
+        {
+            Console.WriteLine("Commands And Snippets Tools");
+            Console.WriteLine("********************************************************************************");
+            Console.WriteLine("Arguments                        |   Description");
+            Console.WriteLine("--------------------------------------------------------------------------------");
+            Console.WriteLine("xml-dump <optional-full-path>    |   Generate Commands XML test dumps");
+            Console.WriteLine("print                            |   Print tests");
+            Console.WriteLine("read-xml                         |   Print XML Tests");
+            Console.WriteLine("reflection                       |   Print Reflection Tests");
+            Console.WriteLine("json                             |   Print Json Tests");
+            Console.WriteLine("other                            |   Print other free tests");
+            Console.WriteLine("********************************************************************************");
+            Console.WriteLine("Please provide an valid argument!");
         }
 
         private static void Main(string[] args)
         {
-            Dictionary<RegisteredArgs, string> registeredArgs = new Dictionary<RegisteredArgs, string>
+            Dictionary<RegisteredArgs, string> registeredArgs = 
+                new Dictionary<RegisteredArgs, string>
             {
                 {RegisteredArgs.XmlCommandsDump, "xml-dump"},
                 {RegisteredArgs.Print, "print"},
                 {RegisteredArgs.ReadXmlData, "read-xml"},
                 {RegisteredArgs.Reflection, "reflection"},
-                {RegisteredArgs.Json, "json"}
-                
+                {RegisteredArgs.Json, "json"},
+                {RegisteredArgs.Other, "other"},
             };
 
             var hasRegisteredArg = HasValidArgument(args, registeredArgs);
 
             if (!hasRegisteredArg)
             {
-                PrintHelp();
+                ProgramHelp();
                 return;
             }
 
@@ -50,15 +68,18 @@ namespace CommandsAndSnippetsTools
                 return;
             }
 
-            if (args[0] == registeredArgs[RegisteredArgs.Print]) PrintTests();
+            if (args[0] == registeredArgs[RegisteredArgs.Print])
+            {
+                var printTests = new PrintTests();
+                printTests.PrintFirstItem();
+                Console.WriteLine("");
+                printTests.PrintResultsWithEfPlatform();
+            }
 
             if (args[0] == registeredArgs[RegisteredArgs.ReadXmlData])
             {
                 var xmlTests = new XmlTests();
-                Console.WriteLine($"{nameof(xmlTests.ReadXmlData)} ↓");
-                xmlTests.ReadXmlData();
-
-                Console.WriteLine($"{nameof(xmlTests.ReadXmlDataAnonymousObj)} ↓");
+                xmlTests.ReadXmlWithEfPlatform();
                 xmlTests.ReadXmlDataAnonymousObj();
             }
 
@@ -74,8 +95,13 @@ namespace CommandsAndSnippetsTools
                 jsonTool.PrintCommandsJson();
                 jsonTool.PrintCommandsJsonWhere(c => c.Platform == "Entity Framework CLI");
             }
-            
-            
+            if (args[0] == registeredArgs[RegisteredArgs.Other])
+            {
+                var other = new OtherTests();
+                other.RunIndiceTests();
+                other.RunRangeTests();
+            }
+ 
         }
 
         private static void GenerateXmlDump(string path = "")
@@ -84,35 +110,7 @@ namespace CommandsAndSnippetsTools
             generator.DumpCommands(path);
             generator.DumpCommandsWithEfPlatform(path);
         }
-
-        private static void PrintTests()
-        {
-            var printTests = new PrintTests();
-
-            Console.WriteLine($"{nameof(printTests.PrintFirstItem)} ↓");
-            printTests.PrintFirstItem();
-
-            Console.WriteLine("");
-
-            Console.WriteLine($"{nameof(printTests.PrintResultsWithEfPlatform)} ↓");
-            printTests.PrintResultsWithEfPlatform();
-        }
-
-        private static void PrintHelp()
-        {
-            Console.WriteLine("Commands And Snippets Tools");
-            Console.WriteLine("********************************************************************************");
-            Console.WriteLine("Arguments                        |   Description");
-            Console.WriteLine("--------------------------------------------------------------------------------");
-            Console.WriteLine("xml-dump <optional-full-path>    |   Generate Commands XML test dumps");
-            Console.WriteLine("print                            |   Print tests");
-            Console.WriteLine("read-xml                         |   Print XML Tests");
-            Console.WriteLine("reflection                       |   Print Reflection Tests");
-            Console.WriteLine("json                             |   Print Json Tests");
-            Console.WriteLine("********************************************************************************");
-            Console.WriteLine("Please provide an valid argument!");
-        }
-
+        
         private static bool HasValidArgument(string[] args, Dictionary<RegisteredArgs, string> registeredArgs)
         {
             bool hasRegisteredArg = false;

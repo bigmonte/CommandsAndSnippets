@@ -18,6 +18,8 @@ namespace CommandsAndSnippetsTools.DumpTools
 
         public void DumpCommands(string path)
         {
+            Console.WriteLine("Dumping all commands into an Xml file...");
+
             var commands = _dbContext.CommandItems.ToList();
 
             var commandDump = commands.ToXml();
@@ -27,6 +29,8 @@ namespace CommandsAndSnippetsTools.DumpTools
 
         public void DumpCommandsWithEfPlatform(string path)
         {
+            Console.WriteLine("Dumping commands with EF Platform into an Xml file...");
+            
             var commands = _dbContext.CommandItems.ToList();
             
             var commandDump = commands.ToXmlWhere(c => c.Platform == "Entity Framework CLI");
@@ -54,7 +58,7 @@ namespace CommandsAndSnippetsTools.DumpTools
                     commandDump.Save(filePath);
                 }
 
-                Console.WriteLine($"Xml dumped to: {filePath}");
+                Console.WriteLine($"[+] Xml dumped to: {filePath}");
                 return;
             }
 
@@ -62,7 +66,7 @@ namespace CommandsAndSnippetsTools.DumpTools
 
             string givenPathFile = $@"{path}/Commands.xml";
             commandDump.Save(givenPathFile);
-            Console.WriteLine($"Xml dumped to: {givenPathFile}");
+            Console.WriteLine($"[+] Xml dumped to: {givenPathFile}");
         }
     }
 }

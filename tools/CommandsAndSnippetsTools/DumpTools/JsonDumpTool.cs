@@ -17,6 +17,8 @@ namespace CommandsAndSnippetsTools.DumpTools
 
         public void PrintCommandsJson()
         {
+            Console.WriteLine("Printing commands to Json...");
+
             var commands = _dbContext.CommandItems.ToList();
 
             JArray objects = new JArray
@@ -37,6 +39,8 @@ namespace CommandsAndSnippetsTools.DumpTools
         
         public void PrintCommandsJsonWhere(Func<Command, bool> whereLambda)
         {
+            Console.WriteLine("Printing commands with lambda defined in program...");
+
             var commands = _dbContext.CommandItems.ToList();
 
             JArray objects = new JArray

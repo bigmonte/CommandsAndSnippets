@@ -6,12 +6,14 @@ namespace CommandsAndSnippetsTools.DumpTools
 {
     public class XmlTests
     {
-        public void ReadXmlData()
+        public void ReadXmlWithEfPlatform()
         {
             var projectPath = Environment.CurrentDirectory;
-            var testFilePath = $@"{projectPath}/XmlDumps/Commands.xml";
+            var testFilePath = $@"{projectPath}/XmlDumps/CommandsDumpedLinq.xml";
             XDocument customers = XDocument.Load(@testFilePath);
-
+            
+            System.Console.WriteLine($"Trying reading {testFilePath} file with EF platform...");
+            
             var xml = from x in customers.Descendants("Command")
                 where x.Attribute("Platform").Value == "Entity Framework CLI"
                 select x;
@@ -24,18 +26,20 @@ namespace CommandsAndSnippetsTools.DumpTools
         public void ReadXmlDataAnonymousObj()
         {
             var projectPath = Environment.CurrentDirectory;
-            var testFilePath = $@"{projectPath}/XmlDumps/Commands.xml";
-            XDocument customers = XDocument.Load(@testFilePath);
+            var testFilePath = $@"{projectPath}/XmlDumps/CommandsDumpedLinq.xml";
+            XDocument commands = XDocument.Load(@testFilePath);
+            
+            Console.WriteLine($"Trying reading {testFilePath} file...");
 
-            var xml = from x in customers.Descendants("Command")
+            var cmdData = from x in commands.Descendants("Command")
                 where x.Attribute("Platform").Value == "Entity Framework CLI"
                 select new { 
                     Platform = x.Attribute("Platform").Value,
-                    CommandLine = x.Attribute("CommandLine").Value,
+                    CommandLine = x.Attribute("Command").Value,
                     HowTo = x.Attribute("HowTo").Value
                 } ;
 
-            foreach (var obj in xml)
+            foreach (var obj in cmdData)
             {
                 Console.WriteLine($"Command: {obj.CommandLine}, " +
                                   $"Platform: {obj.Platform}, " +
