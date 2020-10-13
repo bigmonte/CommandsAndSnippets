@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using CommandsAndSnippetsAPI.Models;
 
-namespace CommandsAndSnippetsTools.XmlTools
+namespace CommandsAndSnippetsTools.DumpTools
 {
     public static class XmlExtensionMethods
     {

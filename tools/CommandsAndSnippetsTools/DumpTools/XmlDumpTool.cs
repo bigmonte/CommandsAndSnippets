@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using CommandsAndSnippetsAPI.Data;
 
-namespace CommandsAndSnippetsTools.XmlTools
+namespace CommandsAndSnippetsTools.DumpTools
 {
     public class XmlDumpTool
     {

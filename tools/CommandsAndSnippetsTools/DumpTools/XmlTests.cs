@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace CommandsAndSnippetsTools.XmlTools
+namespace CommandsAndSnippetsTools.DumpTools
 {
     public class XmlTests
     {

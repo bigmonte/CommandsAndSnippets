@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommandsAndSnippetsTools.XmlTools;
+using CommandsAndSnippetsTools.DumpTools;
 using CommandsAndSnippetsTools.Tools;
 
 namespace CommandsAndSnippetsTools
@@ -13,7 +13,8 @@ namespace CommandsAndSnippetsTools
             XmlCommandsDump,
             Print,
             ReadXmlData,
-            Reflection
+            Reflection,
+            Json
         }
 
         private static void Main(string[] args)
@@ -23,7 +24,9 @@ namespace CommandsAndSnippetsTools
                 {RegisteredArgs.XmlCommandsDump, "xml-dump"},
                 {RegisteredArgs.Print, "print"},
                 {RegisteredArgs.ReadXmlData, "read-xml"},
-                {RegisteredArgs.Reflection, "reflection"}
+                {RegisteredArgs.Reflection, "reflection"},
+                {RegisteredArgs.Json, "json"}
+                
             };
 
             var hasRegisteredArg = HasValidArgument(args, registeredArgs);
@@ -64,6 +67,15 @@ namespace CommandsAndSnippetsTools
                 var reflection = new ReflectionTests();
                 reflection.ReadCommandProperties();
             }
+            
+            if (args[0] == registeredArgs[RegisteredArgs.Json])
+            {
+                var jsonTool = new JsonDumpTool();
+                jsonTool.PrintCommandsJson();
+                jsonTool.PrintCommandsJsonWhere(c => c.Platform == "Entity Framework CLI");
+            }
+            
+            
         }
 
         private static void GenerateXmlDump(string path = "")
@@ -92,10 +104,11 @@ namespace CommandsAndSnippetsTools
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("Arguments                        |   Description");
             Console.WriteLine("--------------------------------------------------------------------------------");
-            Console.WriteLine("xml-dump <optional-full-path>    |   Generate Commands XML Dumps from database");
+            Console.WriteLine("xml-dump <optional-full-path>    |   Generate Commands XML test dumps");
             Console.WriteLine("print                            |   Print tests");
             Console.WriteLine("read-xml                         |   Print XML Tests");
             Console.WriteLine("reflection                       |   Print Reflection Tests");
+            Console.WriteLine("json                             |   Print Json Tests");
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("Please provide an valid argument!");
         }
