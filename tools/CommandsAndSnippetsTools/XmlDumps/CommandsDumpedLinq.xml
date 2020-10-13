@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Commands>
-  <Command Id="1" Platform="Entity Framework CLI" Command="dotnet ef migrations add" HowTo="Create an EF Migration" />
-  <Command Id="2" Platform="Entity Framework CLI" Command="dotnet ef database update -v" HowTo="Apply last created migration to the DB" />
-  <Command Id="3" Platform=".NET Entity Framework CLI" Command="dotnet ef migrations list" HowTo="List all EF migrations" />
+  <Command Id="1" Platform="Entity Framework CLI" Command="dotnet ef migrations add" HowTo="Create an Entity Framework Migration" />
+  <Command Id="2" Platform="Entity Framework CLI" Command="dotnet ef database update" HowTo="Apply last created migration to the DB" />
+  <Command Id="3" Platform="Entity Framework CLI" Command="dotnet ef migrations list" HowTo="List all EF migrations" />
   <Command Id="4" Platform=".NET Core CLI" Command="dotnet build" HowTo="Build a .NET Core 3.1 App" />
   <Command Id="5" Platform=".NET Core CLI" Command="dotnet run" HowTo="Run a .NET Core Project" />
   <Command Id="12" Platform="Entity Framework CLI" Command="dotnet ef " HowTo="List EF basic options" />

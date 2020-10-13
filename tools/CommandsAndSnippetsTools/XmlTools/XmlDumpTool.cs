@@ -19,19 +19,8 @@ namespace CommandsAndSnippetsTools.XmlTools
         public void DumpCommands(string path)
         {
             var commands = _dbContext.CommandItems.ToList();
-            
-            var query = new XElement("Commands",
-                from c in commands
-                select
-                    new XElement("Command",
-                        new XAttribute("Id", c.Id),
-                        new XAttribute("Platform", c.Platform),
-                        new XAttribute("Command", c.CommandLine),
-                        new XAttribute("HowTo", c.HowTo)));
-            
-            var commandDump = new XDocument(new XDeclaration("1.0",
-                "utf-8", "yes"), query);
 
+            var commandDump = commands.ToXml();
             
             SaveXmlToFile(path, commandDump, "CommandsDumpedLinq.xml");
         }
@@ -40,18 +29,7 @@ namespace CommandsAndSnippetsTools.XmlTools
         {
             var commands = _dbContext.CommandItems.ToList();
             
-            var query = new XElement("Commands",
-                from c in commands
-                where c.Platform == "Entity Framework CLI"
-                select
-                    new XElement("Command",
-                        new XAttribute("Platform", c.Platform),
-                        new XAttribute("Command", c.CommandLine),
-                        new XAttribute("HowTo", c.HowTo)));
-            
-            var commandDump = new XDocument(new XDeclaration("1.0",
-                "utf-8", "yes"), query);
-
+            var commandDump = commands.ToXmlWhere(c => c.Platform == "Entity Framework CLI");
             
             SaveXmlToFile(path, commandDump, "CommandsWithEFPlatform.xml");
         }
