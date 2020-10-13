@@ -15,7 +15,7 @@ namespace CommandsAndSnippetsTools
             ReadXmlData,
             Reflection,
             Json,
-            Other
+            Game
         }
         
         private static void ProgramHelp()
@@ -29,7 +29,7 @@ namespace CommandsAndSnippetsTools
             Console.WriteLine("read-xml                         |   Print XML Tests");
             Console.WriteLine("reflection                       |   Print Reflection Tests");
             Console.WriteLine("json                             |   Print Json Tests");
-            Console.WriteLine("other                            |   Print other free tests");
+            Console.WriteLine("game                             |   Run learning game");
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("Please provide an valid argument!");
         }
@@ -44,7 +44,7 @@ namespace CommandsAndSnippetsTools
                 {RegisteredArgs.ReadXmlData, "read-xml"},
                 {RegisteredArgs.Reflection, "reflection"},
                 {RegisteredArgs.Json, "json"},
-                {RegisteredArgs.Other, "other"},
+                {RegisteredArgs.Game, "game"},
             };
 
             var hasRegisteredArg = HasValidArgument(args, registeredArgs);
@@ -70,7 +70,7 @@ namespace CommandsAndSnippetsTools
 
             if (args[0] == registeredArgs[RegisteredArgs.Print])
             {
-                var printTests = new PrintTests();
+                var printTests = new ConsolePrintTool();
                 printTests.PrintFirstItem();
                 Console.WriteLine("");
                 printTests.PrintResultsWithEfPlatform();
@@ -95,11 +95,10 @@ namespace CommandsAndSnippetsTools
                 jsonTool.PrintCommandsJson();
                 jsonTool.PrintCommandsJsonWhere(c => c.Platform == "Entity Framework CLI");
             }
-            if (args[0] == registeredArgs[RegisteredArgs.Other])
+            if (args[0] == registeredArgs[RegisteredArgs.Game])
             {
-                var other = new OtherTests();
-                other.RunIndiceTests();
-                other.RunRangeTests();
+                var other = new LearningGame();
+                other.RunLearningGame();
             }
  
         }

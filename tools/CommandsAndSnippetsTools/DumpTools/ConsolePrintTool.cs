@@ -4,11 +4,11 @@ using CommandsAndSnippetsAPI.Data;
 
 namespace CommandsAndSnippetsTools.Tools
 {
-    public class PrintTests
+    public class ConsolePrintTool
     {
         private readonly DBContext _dbContext;
 
-        public PrintTests()
+        public ConsolePrintTool()
         {
             _dbContext = new DbAccess().DbContext;
         }
