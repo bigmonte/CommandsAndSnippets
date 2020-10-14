@@ -9,27 +9,27 @@ namespace CommandsAndSnippetsAPI.Data
 {
     public class APIRepo : ICommandsAndSnippetsAPIRepo, ISnippetsAPIRepo
     {
-        private readonly DBContext _dbContext;
+        private readonly ApiDataContext _apiDataContext;
         
-        public APIRepo(DBContext dbContext)
+        public APIRepo(ApiDataContext apiDataContext)
         {
-            _dbContext = dbContext;
+            _apiDataContext = apiDataContext;
         }
         public async Task<bool> SaveCommandsChanges()
         {
             // number of entities affected greater or equal to 0?
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await _apiDataContext.SaveChangesAsync() >= 0;
         }
 
         public async Task<List<Command>> GetCommands()
         {
-            var db = _dbContext.CommandItems;
+            var db = _apiDataContext.CommandItems;
             return await db.ToListAsync();
         }
 
         public async Task<Command> GetCommandById(int id)
         {
-            var db = _dbContext.CommandItems;
+            var db = _apiDataContext.CommandItems;
             return await db.FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -40,7 +40,7 @@ namespace CommandsAndSnippetsAPI.Data
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var dbCommands = _dbContext.CommandItems;
+            var dbCommands = _apiDataContext.CommandItems;
 
             await dbCommands.AddAsync(command);
         }
@@ -75,17 +75,17 @@ namespace CommandsAndSnippetsAPI.Data
               throw new ArgumentNullException(nameof(command));
             }
 
-            _dbContext.CommandItems.Remove(command);
+            _apiDataContext.CommandItems.Remove(command);
         }
 
         public bool SaveSnippetsChanges()
         {
-            return _dbContext.SaveChanges() >= 0;
+            return _apiDataContext.SaveChanges() >= 0;
         }
 
         public IEnumerable<Snippet> GetSnippets()
         {
-            return _dbContext.SnippetItems.ToList();
+            return _apiDataContext.SnippetItems.ToList();
         }
 
         public IEnumerable<Snippet> GetSnippetsWithPlatform(string platform)
@@ -107,7 +107,7 @@ namespace CommandsAndSnippetsAPI.Data
                 throw new ArgumentNullException(nameof(snippet));
             }
 
-            _dbContext.SnippetItems.Add(snippet);
+            _apiDataContext.SnippetItems.Add(snippet);
         }
 
         public void UpdateSnippet(Snippet command) { /* nothing here */ }

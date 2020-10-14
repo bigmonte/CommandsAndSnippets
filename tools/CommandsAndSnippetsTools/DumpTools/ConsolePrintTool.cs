@@ -6,7 +6,7 @@ namespace CommandsAndSnippetsTools.Tools
 {
     public class ConsolePrintTool
     {
-        private readonly DBContext _dbContext;
+        private readonly ApiDataContext _dbContext;
 
         public ConsolePrintTool()
         {

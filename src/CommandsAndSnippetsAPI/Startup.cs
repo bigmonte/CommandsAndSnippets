@@ -92,11 +92,14 @@ namespace CommandsAndSnippetsAPI
             
             // UserID = _configuration["User"] retrieves the username on mac 
             
-            services.AddDbContext<DBContext>(options =>
+            services.AddDbContext<ApiDataContext>(options =>
             {
                 options.UseSqlServer(builder.ConnectionString);
               
-            });
+            }).AddDbContext<IdentitiesContext>(options =>
+                {
+                    options.UseSqlServer(builder.ConnectionString);
+                });
             
             /*
              

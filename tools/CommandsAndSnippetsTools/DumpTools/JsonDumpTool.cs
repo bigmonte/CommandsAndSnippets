@@ -8,7 +8,7 @@ namespace CommandsAndSnippetsTools.DumpTools
 {
     public class JsonDumpTool
     {
-        private readonly DBContext _dbContext;
+        private readonly ApiDataContext _dbContext;
 
         public JsonDumpTool()
         {

@@ -55,16 +55,6 @@ namespace CommandsAndSnippetsAPI.Controllers
 
             return CreatedAtRoute(nameof(GetSnippetById), new {Id = snippetReadDto.Id}, snippetReadDto);
 
-            /*  ^ this method will:
-             *      - Return 201: Created 201 status code
-             *      - Pass back the created resource in body response
-             *      - Pass back the URI (or route) in the response header
-             */
-            
-            // Further references:
-            // https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-3.1
-            // https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller.createdatroute
-            
         }
         
         // We actually hate this

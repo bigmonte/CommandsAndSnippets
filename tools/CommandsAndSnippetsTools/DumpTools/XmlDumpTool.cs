@@ -9,7 +9,7 @@ namespace CommandsAndSnippetsTools.DumpTools
 {
     public class XmlDumpTool
     {
-        private readonly DBContext _dbContext;
+        private readonly ApiDataContext _dbContext;
 
         public XmlDumpTool()
         {
