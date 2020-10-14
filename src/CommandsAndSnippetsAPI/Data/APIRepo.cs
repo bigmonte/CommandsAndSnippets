@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data
 {
@@ -13,53 +15,55 @@ namespace CommandsAndSnippetsAPI.Data
         {
             _dbContext = dbContext;
         }
-        public bool SaveCommandsChanges()
+        public async Task<bool> SaveCommandsChanges()
         {
             // number of entities affected greater or equal to 0?
-            return _dbContext.SaveChanges() >= 0;
+            return await _dbContext.SaveChangesAsync() >= 0;
         }
 
-        public IEnumerable<Command> GetCommands()
+        public async Task<List<Command>> GetCommands()
         {
-            return _dbContext.CommandItems.ToList();
+            var db = _dbContext.CommandItems;
+            return await db.ToListAsync();
         }
 
-        public Command GetCommandById(int id)
+        public async Task<Command> GetCommandById(int id)
         {
-            return _dbContext.CommandItems.FirstOrDefault(p => p.Id == id);
+            var db = _dbContext.CommandItems;
+            return await db.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public void CreateCommand(Command command)
+        public async void CreateCommand(Command command)
         {
             if (command == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            _dbContext.CommandItems.Add(command);
+            var dbCommands = _dbContext.CommandItems;
+
+            await dbCommands.AddAsync(command);
         }
         
-        public IEnumerable<Command> GetCommandsWithPlatform(string platform)
+        public async Task<IEnumerable<Command>> GetCommandsWithPlatform(string platform)
         {
-            var query = from c in GetCommands()
+            var query = from c in await GetCommands()
                 where c.Platform == platform
                 select c;
 
-            return query;
+            return query.ToList();
         }
         
-        public IEnumerable<Command> SearchCommands(string text)
+        public async Task<IEnumerable<Command>> SearchCommands(string text)
         {
-            // TODO: avoid creating unnecessary copies
-            
             var q =
-                from d in GetCommands()
+                from d in await GetCommands()
                 where d.Platform.ToLower().Contains(text.ToLower())
                       || d.CommandLine.ToLower().Contains(text.ToLower())
                       || d.HowTo.ToLower().Contains(text.ToLower())
                 select d;
             
-            return q;
+            return q.ToList();
         }
         
         public void UpdateCommand(Command command) { /* nothing here */ }

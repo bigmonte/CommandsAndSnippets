@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Controllers;
 using CommandsAndSnippetsAPI.Data;
@@ -25,7 +26,7 @@ namespace CommandsAndSnippetsAPI.Tests
             _mapper = new Mapper(_configuration);
         }
         
-        private List<Command> GetCommands(int num)
+        private async  Task<List<Command>> GetCommands(int num)
         {
             var commands = new List<Command>();
 
@@ -44,7 +45,7 @@ namespace CommandsAndSnippetsAPI.Tests
         }
 
         [Fact]
-        public void GetCommands_ReturnsZeroItems_WhenDBIsEmpty()
+        public async void GetCommands_ReturnsZeroItems_WhenDBIsEmpty()
         {
             // Arrange
             
@@ -83,7 +84,7 @@ namespace CommandsAndSnippetsAPI.Tests
 
 
         [Fact]
-        public void GetCommands_ReturnsOneItem_WhenDBHasOneResource()
+        public async void GetCommands_ReturnsOneItem_WhenDBHasOneResource()
         {
             // Arrange
             _mockApiRepo.Setup(repo => 
@@ -91,7 +92,7 @@ namespace CommandsAndSnippetsAPI.Tests
             var controller = new CommandsController(_mockApiRepo.Object, _mapper);
             
             // Act 
-            var result = controller.GetCommands();
+            var result = await controller.GetCommands();
             
             // Assert
 
@@ -119,10 +120,11 @@ namespace CommandsAndSnippetsAPI.Tests
         
         
         [Fact]
-        public void GetCommandById_Returns200OK_WhenValidIDProvided()
+        public  void GetCommandById_Returns200OK_WhenValidIDProvided()
         {
+            
             // Arrange
-            _mockApiRepo.Setup(repo => repo.GetCommandById(0)).Returns(
+            _mockApiRepo.Setup(repo =>  repo.GetCommandById(0).Result).Returns(
                 new Command {Id = 1, HowTo = "Mock", Platform = "MockPL", CommandLine = "Mock"});
             var controller = new CommandsController(_mockApiRepo.Object, _mapper);
             

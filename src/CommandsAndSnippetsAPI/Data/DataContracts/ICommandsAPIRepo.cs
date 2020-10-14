@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
 
 namespace CommandsAndSnippetsAPI.Data
@@ -7,12 +8,12 @@ namespace CommandsAndSnippetsAPI.Data
     
     public interface ICommandsAndSnippetsAPIRepo
     {
-        bool SaveCommandsChanges();
-        IEnumerable<Command> GetCommands();
-        IEnumerable<Command> GetCommandsWithPlatform(string platform);
-        IEnumerable<Command> SearchCommands(string text);
+        Task<bool> SaveCommandsChanges();
+        Task<List<Command>> GetCommands();
+        Task<IEnumerable<Command>> GetCommandsWithPlatform(string platform);
+        Task<IEnumerable<Command>> SearchCommands(string text);
 
-        Command GetCommandById(int id);
+        Task<Command> GetCommandById(int id);
         void CreateCommand (Command command);
         void UpdateCommand(Command command);
         void DeleteCommand(Command command);

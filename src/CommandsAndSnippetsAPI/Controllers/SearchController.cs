@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Dtos;
@@ -22,17 +22,17 @@ namespace CommandsAndSnippetsAPI.Controllers
 
         
         [HttpGet("platform/{platform}", Name = "CommandsWithPlatform")]
-        public ActionResult<IEnumerable<CommandReadDto>> CommandsWithPlatform(string platform)
+        public async Task<ActionResult<IEnumerable<CommandReadDto>>> CommandsWithPlatform(string platform)
         {
-            var commandsWithPlatform = _apiRepo.GetCommandsWithPlatform(platform);
+            var commandsWithPlatform = await _apiRepo.GetCommandsWithPlatform(platform);
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandsWithPlatform));
         }
         
         
         [HttpGet("{text}")]
-        public ActionResult<IEnumerable<CommandReadDto>> SearchCommand(string text)
+        public async Task<ActionResult<IEnumerable<CommandReadDto>>> SearchCommand(string text)
         {
-            var searchResult = _apiRepo.SearchCommands(text);
+            var searchResult = await _apiRepo.SearchCommands(text);
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(searchResult));
         }
 
