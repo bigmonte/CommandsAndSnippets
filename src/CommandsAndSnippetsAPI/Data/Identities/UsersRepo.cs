@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data.Identities
 {
-    public class UsersRepo : IUserRepo
+    public class UsersRepo : IUserRepo, IUserPasswordStore<User>
     {
         private readonly IdentitiesContext _context;
 
@@ -28,49 +28,44 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             _context.Dispose();
         }
 
-        public async Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
-            var getUser = await _context.Users.FirstOrDefaultAsync(x => true, cancellationToken: cancellationToken);
-            
-            if (getUser == null)
+            if (cancellationToken.IsCancellationRequested)
             {
-                throw new Exception(nameof(user));
+                return Task.FromCanceled<string>(cancellationToken);
             }
 
-            return getUser.Id;
+            return Task.FromResult(user.Id);
 
         }
 
-        public async Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
         {
-            var getUser = await _context.Users.FirstOrDefaultAsync(x => true, cancellationToken: cancellationToken);
-            
-            if (getUser == null)
+            if (cancellationToken.IsCancellationRequested)
             {
-                throw new Exception(nameof(user));
+                return Task.FromCanceled<string>(cancellationToken);
             }
 
-            return getUser.UserName;
+            return Task.FromResult(user.UserName);
         }
 
         public async Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
         {
-            var foundUser = await _context.Users.FirstOrDefaultAsync(x => x == user, cancellationToken: cancellationToken);
+            var foundUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id, cancellationToken: cancellationToken);
             if (foundUser == null) return;
             foundUser.UserName = userName;
             await SaveChanges(user);
         }
 
-        public async Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
+        public  Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
         {
-            var getUser = await _context.Users.FirstOrDefaultAsync(x => true, cancellationToken: cancellationToken);
-            
-            if (getUser == null)
+            if (cancellationToken.IsCancellationRequested)
             {
-                throw new Exception(nameof(user));
+                return Task.FromCanceled<string>(cancellationToken);
             }
 
-            return getUser.NormalizedUserName;
+            return Task.FromResult(user.NormalizedUserName);
+
         }
 
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
@@ -90,8 +85,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
         public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
         {
             _context.Users.Update(user);
-            
-            
+
             var success =  await _context.SaveChangesAsync(cancellationToken) > 0;
             
            if (success) return IdentityResult.Success;
@@ -101,7 +95,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 
         public async Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
         {
-            var foundUser = await _context.Users.FirstOrDefaultAsync(x => true, cancellationToken: cancellationToken);
+            var foundUser = await _context.Users.FirstOrDefaultAsync(x=> x.Id == user.Id, cancellationToken: cancellationToken);
 
             var error = new IdentityError {Description = "User Not found"};
 
@@ -143,6 +137,31 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             var db = _context.Users;
             var user = await db.FirstOrDefaultAsync(u => u.Id == id);
             return user;
+        }
+
+        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled<string>(cancellationToken);
+            }
+
+            return Task.FromResult(user.PasswordHash);
+        }
+
+        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled<bool>(cancellationToken);
+            }
+
+            return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
     }
 }
