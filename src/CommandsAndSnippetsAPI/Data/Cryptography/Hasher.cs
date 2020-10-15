@@ -57,8 +57,6 @@ namespace CommandsAndSnippetsAPI.Data
             var hashAlgorithm = (HashAlgorithm) algoAsInt.Value;
             var hashed = CreateHash(text, salt, hashAlgorithm, true);
             return hashed == hash;
-
-            //GetAlgo
         }
 
         public string HashPassword(User user, string password)

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace CommandsAndSnippetsAPI.Data.Cryptography
 {
+    // ReSharper disable once InconsistentNaming
     public class SHA2_512 : BaseCryptoItem
     {
         public string Hash(string text, string salt, bool storeSalt)

@@ -2,7 +2,7 @@ using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CommandsAndSnippetsAPI.Data
+namespace CommandsAndSnippetsAPI.Data.Identities
 {
     public sealed class IdentitiesContext : IdentityDbContext<User>
     {

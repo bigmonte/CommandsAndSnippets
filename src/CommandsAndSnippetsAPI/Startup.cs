@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
+using CommandsAndSnippetsAPI.Data.Identities;
 using Newtonsoft.Json.Serialization;
 
 /*
