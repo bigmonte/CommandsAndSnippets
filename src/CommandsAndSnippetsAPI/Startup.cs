@@ -121,7 +121,9 @@ namespace CommandsAndSnippetsAPI
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
-                .AddScoped<ISnippetsAPIRepo, ApiRepo>();
+                .AddScoped<ISnippetsAPIRepo, ApiRepo>()
+                .AddScoped<IUserRepo, UsersRepo>();
+
 
 
         }

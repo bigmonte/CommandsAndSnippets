@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
@@ -24,7 +25,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _context.Dispose();
         }
 
         public async Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
@@ -119,6 +120,29 @@ namespace CommandsAndSnippetsAPI.Data.Identities
         public Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+
+        public async Task CreateUser(User user)
+        {
+            await CreateAsync(user, CancellationToken.None);
+        }
+
+        public async Task SaveChanges()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> GetUserById(string id)
+        {
+            var db = _context.Users;
+            var user = await db.FirstOrDefaultAsync(u => u.Id == id);
+            return user;
         }
     }
 }

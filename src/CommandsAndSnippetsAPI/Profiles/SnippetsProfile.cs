@@ -9,23 +9,15 @@ namespace CommandsAndSnippetsAPI.Profiles
     {
         public SnippetsProfile()
         {
-            // Map our source object (Command) to our target object (CommandReadDto)
-
             Type snippetType = typeof(Snippet);
             Type snippetReadDto = typeof(SnippetReadDto);
             Type snippetCreateDto = typeof(SnippetCreateDto);
             Type snippetUpdateDto = typeof(SnippetUpdateDto);
 
-            // 1 way mapping
-            TwoWayMapping(snippetType, snippetUpdateDto);
-            TwoWayMapping(snippetType, snippetReadDto);
-            TwoWayMapping(snippetType, snippetCreateDto);
+            this.TwoWayMapping(snippetType, snippetUpdateDto);
+            this.TwoWayMapping(snippetType, snippetReadDto);
+            this.TwoWayMapping(snippetType, snippetCreateDto);
 
-        }
-        private void TwoWayMapping(Type type1, Type type2)
-        {
-            CreateMap(type1, type2);
-            CreateMap(type2, type1);
         }
     }
 }

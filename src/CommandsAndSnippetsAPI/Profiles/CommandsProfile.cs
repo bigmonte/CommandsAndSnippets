@@ -16,16 +16,10 @@ namespace CommandsAndSnippetsAPI.Profiles
             Type cmdCreateDto = typeof(CommandCreateDto);
             Type cmdUpdateDto = typeof(CommandUpdateDto);
 
-            // 1 way mapping
-            TwoWayMapping(cmdType, cmdUpdateDto);
-            TwoWayMapping(cmdType, cmdReadDto);
-            TwoWayMapping(cmdType, cmdCreateDto);
+            this.TwoWayMapping(cmdType, cmdUpdateDto);
+            this.TwoWayMapping(cmdType, cmdReadDto);
+            this.TwoWayMapping(cmdType, cmdCreateDto);
 
-        }
-        private void TwoWayMapping(Type type1, Type type2)
-        {
-            CreateMap(type1, type2);
-            CreateMap(type2, type1);
         }
     }
 }
