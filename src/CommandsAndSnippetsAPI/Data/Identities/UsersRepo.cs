@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data.Identities
 {
-    public class UsersRepo : IUserRepo, IUserPasswordStore<User>
+    public class UsersRepo : IUserRepo
     {
         private readonly IdentitiesContext _context;
 
@@ -16,6 +16,23 @@ namespace CommandsAndSnippetsAPI.Data.Identities
         {
             _context = context;
         }
+        
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+
+        public async Task CreateUser(User user)
+        {
+            await CreateAsync(user, CancellationToken.None);
+        }
+
+        public async Task SaveChanges()
+        {
+            await _context.SaveChangesAsync();
+        }
+
         private async Task<bool> SaveChanges(User user)
         {
             _context.Users.Update(user);
@@ -28,6 +45,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             _context.Dispose();
         }
 
+        #region IUserStore
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -73,13 +91,13 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             throw new NotImplementedException();
         }
 
-        public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
         {
-            var u = await _context.AddAsync(user, cancellationToken);
+            var u =  _context.AddAsync(user, cancellationToken).Result;
             
-            if(u.State == EntityState.Added) return IdentityResult.Success;
+            if(u.State == EntityState.Added) return Task.FromResult(IdentityResult.Success);
            
-            return IdentityResult.Failed();
+            return Task.FromResult(IdentityResult.Failed());
         }
 
         public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
@@ -115,30 +133,17 @@ namespace CommandsAndSnippetsAPI.Data.Identities
         {
             throw new NotImplementedException();
         }
-
-        public async Task<IEnumerable<User>> GetUsers()
-        {
-            var users = await _context.Users.ToListAsync();
-            return users;
-        }
-
-        public async Task CreateUser(User user)
-        {
-            await CreateAsync(user, CancellationToken.None);
-        }
-
-        public async Task SaveChanges()
-        {
-            await _context.SaveChangesAsync();
-        }
-
+        
         public async Task<User> GetUserById(string id)
         {
             var db = _context.Users;
             var user = await db.FirstOrDefaultAsync(u => u.Id == id);
             return user;
         }
+        
+        #endregion
 
+        #region IUserPasswordStore
         public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -163,5 +168,59 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
+        
+        #endregion
+
+        #region EmailStore
+        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled<string>(cancellationToken);
+            }
+
+            return Task.FromResult(user.Email);
+        }
+
+        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled<bool>(cancellationToken);
+            }
+
+            return Task.FromResult(user.EmailConfirmed);
+        }
+
+        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled<string>(cancellationToken);
+            }
+
+            return Task.FromResult(user.NormalizedEmail);
+        }
+
+        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
