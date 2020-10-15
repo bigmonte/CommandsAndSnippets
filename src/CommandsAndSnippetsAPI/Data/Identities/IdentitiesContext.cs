@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data
 {
-    public class IdentitiesContext : IdentityDbContext<User>
+    public sealed class IdentitiesContext : IdentityDbContext<User>
     {
         public IdentitiesContext(DbContextOptions<IdentitiesContext> options) : base(options)
         {

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data
 {
-    public class APIRepo : ICommandsAndSnippetsAPIRepo, ISnippetsAPIRepo
+    public class ApiRepo : ICommandsAndSnippetsAPIRepo, ISnippetsAPIRepo
     {
         private readonly ApiDataContext _apiDataContext;
         
-        public APIRepo(ApiDataContext apiDataContext)
+        public ApiRepo(ApiDataContext apiDataContext)
         {
             _apiDataContext = apiDataContext;
         }
