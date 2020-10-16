@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CommandsAndSnippetsAPI.Controllers
 {
-    // TODO: Move most of this functionality to another repo layer to perform validation
-    // this was only for testing api functionalities
+    // TODO: Only Admin role users would be able to access this 
 
     [Route("api/[controller]")]
     [ApiController]

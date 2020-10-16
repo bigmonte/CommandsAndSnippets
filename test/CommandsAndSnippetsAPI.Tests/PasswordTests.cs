@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Data.Cryptography;
 using CommandsAndSnippetsAPI.Data.Identities;
@@ -19,22 +18,22 @@ namespace CommandsAndSnippetsAPI.Tests
         private readonly Mock<IUserRepo> _mockApiRepo = new Mock<IUserRepo>();
 
         private readonly SignInManager _signInManager;
+        private readonly UserManager _userManager;
 
         public PasswordTests()
         {
-            // Mock Objects
-            var mockUserManager = new Mock<UserManager>(_mockApiRepo.Object as IUserStore<User>,
-                null, null, null, null, null, null, null, null);
+
             var contextAccessor = new Mock<IHttpContextAccessor>();
             var userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
             var logger = new Mock<ILogger<SignInManager>>();
+            _userManager = new UserManager(_mockApiRepo.Object, null, _hasher, null, null, null, null, null, null );
 
             // Testing targets
 
             IHasher iHasher = new Hasher();
             _hasher = new Hasher();
 
-            _signInManager = new SignInManager(mockUserManager.Object, contextAccessor.Object,
+            _signInManager = new SignInManager(_userManager, contextAccessor.Object,
                 userPrincipalFactory.Object, null, logger.Object, null, null, iHasher);
         }
 
@@ -139,6 +138,9 @@ namespace CommandsAndSnippetsAPI.Tests
             Assert.True(result == SignInResult.Success);
         }
 
+        // Todo: SignInManager tests not reflecting actual behaviour? 
+        
+        #region SignInManager Tests
 
         [Fact]
         public void SignInManager_Gets_LoginFailed_With_Incorrect_SHA3512_Hashed_Password()
@@ -238,10 +240,7 @@ namespace CommandsAndSnippetsAPI.Tests
             Assert.True(result1 == SignInResult.Success && result2 == SignInResult.Failed);
         }
         
-        
-        
-        
-
+        #endregion
 
         public void Dispose()
         {

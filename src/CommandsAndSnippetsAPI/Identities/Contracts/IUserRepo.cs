@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CommandsAndSnippetsAPI.Data.Identities
 {
+    /// <summary>
+    /// This is our Users repository.
+    /// Since this is a simple app we'll have the following roles
+    /// Admin and APIClient
+    /// </summary>
+    
     public interface IUserRepo : IUserStore<User>, 
         IUserPasswordStore<User>,
         IUserEmailStore<User>, 

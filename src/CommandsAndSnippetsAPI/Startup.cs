@@ -22,30 +22,34 @@ namespace CommandsAndSnippetsAPI
 {
     public class Startup
     {
+        /// <summary>
+        /// This allows us to access our secrets hosted in the System.
+        /// </summary>
+        
         private readonly IConfiguration _configuration;
-
         public Startup(IConfiguration config) => _configuration = config;
-        private readonly string _allowSpecificOrigins = "_allowSpecificOrigins";
- 
+        
+        private const string AllowSpecificOrigins = "_allowSpecificOrigins";
+
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors(options => { options.AddPolicy(name: _allowSpecificOrigins,
-                builder =>
+            services.AddCors(options => 
+            { options.AddPolicy(name: AllowSpecificOrigins,
+                b =>
                 {
-                    builder.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080");
-                }); });
+                    b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080");
+                }); 
+            });
 
-   
-
+            // _configuration["User"] retrieves the username on mac 
+            
             var builder = new SqlConnectionStringBuilder
             {
                 ConnectionString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;",
                 UserID = _configuration["UserID"],
                 Password = _configuration["Password"]
             };
-            
-            // UserID = _configuration["User"] retrieves the username on mac 
             
             services.AddDbContext<ApiDataContext>(options =>
             {
@@ -81,11 +85,11 @@ namespace CommandsAndSnippetsAPI
                     .AddEntityFrameworkStores<IdentitiesContext>()
                     .AddDefaultTokenProviders();
                 services
-                .AddIdentityCore<User>(opt =>
-                {
-                    opt.User.RequireUniqueEmail = true;
-                })
-                .AddSignInManager<SignInManager>();
+                    .AddIdentityCore<User>(opt =>
+                    {
+                        opt.User.RequireUniqueEmail = true;
+                    })
+                    .AddSignInManager<SignInManager>();
                 services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
@@ -101,7 +105,7 @@ namespace CommandsAndSnippetsAPI
                 .AddCookie()
                 .AddJwtBearer(jwtBearerOptions =>
                 {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateActor = false,
                         ValidateAudience = false,
@@ -112,32 +116,18 @@ namespace CommandsAndSnippetsAPI
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TestSingKey"))
                     };
                 });
-                services.Replace(new ServiceDescriptor(
-                    serviceType: typeof(IPasswordHasher<IdentityUser>),
-                    implementationType: typeof(Hasher),
-                    ServiceLifetime.Scoped));
-
-                services.Replace(new ServiceDescriptor(
-                    serviceType: typeof(IUserStore<IdentityUser>),
-                    implementationType: typeof(IUserRepo),
-                    ServiceLifetime.Scoped));
-
-                services.Replace(new ServiceDescriptor(
-                    serviceType: typeof(SignInManager<IdentityUser>),
-                    implementationType: typeof(SignInManager),
-                    ServiceLifetime.Scoped));
-
-                services.Replace(new ServiceDescriptor(
-                    serviceType: typeof(UserManager<IdentityUser>),
-                    implementationType: typeof(UserManager),
-                    ServiceLifetime.Scoped));
-
-
-
         }
 
         // This method gets called by the runtime.
         // Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Our implementation of this method does the following -
+        /// Does use Developer Exception page if needed;
+        /// Use Routing and Endpoints in which our controllers will get automatically configured;
+        /// Configure our app to use allow CORS from the AllowSpecificOrigins;
+        /// </summary>
+        /// <param name="app">Mechanism to configure application request pipeline</param>
+        /// <param name="env">Information about web hosting environment</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -150,7 +140,7 @@ namespace CommandsAndSnippetsAPI
 
             app
                 .UseRouting()
-                .UseCors(_allowSpecificOrigins)
+                .UseCors(AllowSpecificOrigins)
                 .UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
