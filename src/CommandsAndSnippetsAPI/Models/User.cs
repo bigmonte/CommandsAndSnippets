@@ -46,7 +46,7 @@ namespace CommandsAndSnippetsAPI.Models
         /// </summary>
         public override bool EmailConfirmed { get; set; }
 
-        [ProtectedPersonalData] [Required] [MaxLength(100)]
+        [ProtectedPersonalData] [Required] [MaxLength(100)] 
         public sealed override string Email { get; set; }
         
         [Required]

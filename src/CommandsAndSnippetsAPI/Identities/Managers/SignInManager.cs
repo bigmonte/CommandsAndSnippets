@@ -16,7 +16,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 
         public SignInManager(UserManager<User> userManager, IHttpContextAccessor contextAccessor,
             IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor,
-            ILogger<SignInManager<User>> logger, IAuthenticationSchemeProvider schemes,
+            ILogger<SignInManager> logger, IAuthenticationSchemeProvider schemes,
             IUserConfirmation<User> confirmation, IHasher hasher) : base(userManager, contextAccessor, claimsFactory, optionsAccessor,
             logger, schemes, confirmation)
         {

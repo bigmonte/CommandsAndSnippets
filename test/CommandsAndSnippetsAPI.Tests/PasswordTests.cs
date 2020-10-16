@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Data.Cryptography;
 using CommandsAndSnippetsAPI.Data.Identities;
@@ -154,6 +155,24 @@ namespace CommandsAndSnippetsAPI.Tests
             // Assert
 
             Assert.True(result == SignInResult.Failed);
+        }
+
+        [Fact]
+        public void SignInManager_Gets_LoginFailed_With_Incorrect_Password2()
+        {
+            // Arrange
+
+            var password = _hasher.CreateHash("password21d", BaseCryptoItem.HashAlgorithm.SHA3_512);
+
+            User testUser = new User();
+            
+            testUser.PasswordHash = password;
+
+            // Act
+            var result = _signInManager.CreateUserPrincipalAsync(testUser).Result;
+            // Assert
+
+            Assert.IsType<ClaimsPrincipal>(result);
         }
 
 
