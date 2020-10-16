@@ -1,37 +1,52 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Controllers;
 using CommandsAndSnippetsAPI.Data;
+using CommandsAndSnippetsAPI.Data.Cryptography;
 using CommandsAndSnippetsAPI.Data.Identities;
 using CommandsAndSnippetsAPI.Models;
 using CommandsAndSnippetsAPI.Profiles;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace CommandsAndSnippetsAPI.Tests
 {
     public class UsersRepositoryTests : IDisposable
     {
-        private Mock<IUserRepo> _mockApiRepo = new Mock<IUserRepo>();
-        private UsersProfile _realProfile = new UsersProfile();
+        private readonly Hasher _hasher;
+        private readonly Mock<IUserRepo> _mockApiRepo = new Mock<IUserRepo>();
+        private readonly Mock<ILoginManager> _mockLoginManager = new Mock<ILoginManager>();
+        private readonly Mock<IHasher> _mockIHasher = new Mock<IHasher>();
+        
+        private readonly UsersProfile _realProfile = new UsersProfile();
         
         private MapperConfiguration _configuration;
         private IMapper _mapper;
         private UsersController _controller;
-        private Mock<UserManager> _mockUserManager;
-        private Mock<SignInManager> _mockSignInManager;
+        private Mock<SignInManager> _mockSignInManager = new Mock<SignInManager>();
         public UsersRepositoryTests()
         {
             _configuration = new MapperConfiguration( cfg => cfg.AddProfile(_realProfile));
             _mapper = new Mapper(_configuration);
+            _hasher = new Hasher();
+            
+            // Todo handle me 
+            
+            var mockUserManager = new Mock<UserManager>(_mockApiRepo.Object as IUserStore<User>,
+                null, null, null, null, null, null, null, null);
+
+            var contextAccessor = new Mock<IHttpContextAccessor>();
+            var userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
+
+            _mockSignInManager = new Mock<SignInManager>(mockUserManager.Object as UserManager<User>,
+                contextAccessor.Object, userPrincipalFactory.Object, null, null, null, null, _mockIHasher.Object);
+ 
+            _controller = new UsersController(_mapper, _mockApiRepo.Object,_mockLoginManager.Object);
         }
+        
         
         private  List<User> GetUsers(int num)
         {
@@ -58,20 +73,72 @@ namespace CommandsAndSnippetsAPI.Tests
         }
         
         [Fact]
-        public async void UserWithPasswordHasHashVerified()
+        public  void SHA3_512_Password_Gets_Verified()
         {
-            // Arrange
 
-       
-            var firstUser = GetUsers(1).First();
+            var password = _hasher.CreateHash("password", BaseCryptoItem.HashAlgorithm.SHA3_512);
 
             // Act
+            var result = _hasher.MatchesHash("password", password);
 
-            var result = await _mockSignInManager.Object.PasswordSignInAsync(firstUser, "password", false, false);
             // Assert
-            Assert.IsType<SignInResult>(result);
+            
+            Assert.True(result);
 
         }
+        
+        [Fact]
+        public void SHA2_512_Password_Gets_Verified()
+        {
+            // Arrange
+            var password = _hasher.CreateHash("password", BaseCryptoItem.HashAlgorithm.SHA2_512);
+
+            // Act
+            var result = _hasher.MatchesHash("password", password);
+
+            // Assert
+            
+            Assert.True(result);
+
+        }
+        
+        [Fact]
+        public void SHA3_512_Password_With_Symbols_and_Numbers_Gets_Verified()
+        {
+            // Arrange
+            
+            var password = _hasher.CreateHash("Uw&wtUxo912=27%$//dUwuq", BaseCryptoItem.HashAlgorithm.SHA3_512);
+
+            // Act
+            var result = _hasher.MatchesHash("Uw&wtUxo912=27%$//dUwuq", password);
+
+            // Assert
+            
+            Assert.True(result);
+
+        }
+        
+        
+        [Fact]
+        public void SHA3_512_Password_With_Different_Symbols_and_Numbers_Gets_Not_Verified()
+        {
+            // Arrange
+            
+            var password = _hasher.CreateHash("Uw&wtUxo912=27%$//dUwuq", BaseCryptoItem.HashAlgorithm.SHA3_512);
+
+            // Act
+            var result = _hasher.MatchesHash("Uw&wtU1291212191dUwuq", password);
+
+            // Assert
+            
+            Assert.False(result);
+
+        }
+        
+        
+        
+        
+        
         
         public void Dispose()
         {

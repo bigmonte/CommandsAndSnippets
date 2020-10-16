@@ -10,8 +10,6 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 {
     public class UserManager : UserManager<User>
     {
-        private readonly UsersRepo _userRepo;
-
         public UserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor,
             IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer,
@@ -19,7 +17,6 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services,
             logger)
         {
-            _userRepo = (UsersRepo) store;
         }
 
         public override async Task<bool> CheckPasswordAsync(User user, string password)
