@@ -112,6 +112,26 @@ namespace CommandsAndSnippetsAPI
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TestSingKey"))
                     };
                 });
+                services.Replace(new ServiceDescriptor(
+                    serviceType: typeof(IPasswordHasher<IdentityUser>),
+                    implementationType: typeof(Hasher),
+                    ServiceLifetime.Scoped));
+
+                services.Replace(new ServiceDescriptor(
+                    serviceType: typeof(IUserStore<IdentityUser>),
+                    implementationType: typeof(IUserRepo),
+                    ServiceLifetime.Scoped));
+
+                services.Replace(new ServiceDescriptor(
+                    serviceType: typeof(SignInManager<IdentityUser>),
+                    implementationType: typeof(SignInManager),
+                    ServiceLifetime.Scoped));
+
+                services.Replace(new ServiceDescriptor(
+                    serviceType: typeof(UserManager<IdentityUser>),
+                    implementationType: typeof(UserManager),
+                    ServiceLifetime.Scoped));
+
 
 
         }

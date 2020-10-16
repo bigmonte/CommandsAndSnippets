@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Data.Cryptography;
 using CommandsAndSnippetsAPI.Models;
@@ -103,5 +104,9 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             return null;
         }
 
+        public override Task<ClaimsPrincipal> CreateUserPrincipalAsync(User user)
+        {
+            return base.CreateUserPrincipalAsync(user);
+        }
     }
 }

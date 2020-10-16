@@ -92,7 +92,7 @@ namespace CommandsAndSnippetsAPI.Tests
         }
 
         [Fact]
-        public void SHA3_512_Password_With_Symbols_and_Numbers_Gets_Verified()
+        public void SHA3_512_Password_With_Symbols_and_Numbers_Gets_Success()
         {
             // Arrange
 
@@ -108,7 +108,7 @@ namespace CommandsAndSnippetsAPI.Tests
 
 
         [Fact]
-        public void SHA3_512_Password_With_Different_Symbols_and_Numbers_Gets_Not_Verified()
+        public void SHA3_512_Password_With_Different_Symbols_and_Numbers_Gets_Unsuccess()
         {
             // Arrange
 
@@ -124,7 +124,7 @@ namespace CommandsAndSnippetsAPI.Tests
 
 
         [Fact]
-        public void SignInManager_Gets_LoginSuccess_With_Correct_Password()
+        public void SignInManager_Gets_LoginSuccess_With_Correct_SHA3512_Hashed_Password()
         {
             // Arrange
 
@@ -136,12 +136,12 @@ namespace CommandsAndSnippetsAPI.Tests
             var result = _signInManager.CheckPasswordSignInAsync(testUser, "password", false).Result;
             // Assert
 
-            Assert.False(result == SignInResult.Success);
+            Assert.True(result == SignInResult.Success);
         }
 
 
         [Fact]
-        public void SignInManager_Gets_LoginFailed_With_Incorrect_Password()
+        public void SignInManager_Gets_LoginFailed_With_Incorrect_SHA3512_Hashed_Password()
         {
             // Arrange
 
@@ -156,24 +156,91 @@ namespace CommandsAndSnippetsAPI.Tests
 
             Assert.True(result == SignInResult.Failed);
         }
-
         [Fact]
-        public void SignInManager_Gets_LoginFailed_With_Incorrect_Password2()
+        public void SignInManager_Gets_LoginSuccess_With_Correct_SHA2_512_Hashed_Password()
         {
             // Arrange
 
-            var password = _hasher.CreateHash("password21d", BaseCryptoItem.HashAlgorithm.SHA3_512);
+            var password = _hasher.CreateHash("password", BaseCryptoItem.HashAlgorithm.SHA2_512);
 
             User testUser = new User();
-            
+            testUser.PasswordHash = password;
+            // Act
+            var result = _signInManager.CheckPasswordSignInAsync(testUser, "password", false).Result;
+            // Assert
+
+            Assert.True(result == SignInResult.Success);
+        }
+
+
+        [Fact]
+        public void SignInManager_Gets_LoginFailed_With_Incorrect_SHA2_512_Hashed_Password()
+        {
+            // Arrange
+
+            var password = _hasher.CreateHash("password21d", BaseCryptoItem.HashAlgorithm.SHA2_512);
+
+            User testUser = new User();
             testUser.PasswordHash = password;
 
             // Act
-            var result = _signInManager.CreateUserPrincipalAsync(testUser).Result;
+            var result = _signInManager.CheckPasswordSignInAsync(testUser, "password", false).Result;
             // Assert
 
-            Assert.IsType<ClaimsPrincipal>(result);
+            Assert.True(result == SignInResult.Failed);
         }
+        
+        
+        [Fact]
+        public void SignInManager_Capable_Of_Verifying_Correct_Passwords_Hashed_With_Different_Algos()
+        {
+            // Arrange
+
+            var password1 = _hasher.CreateHash("password21d", BaseCryptoItem.HashAlgorithm.SHA3_512);
+            var password2 = _hasher.CreateHash("djSasOjd%12$78", BaseCryptoItem.HashAlgorithm.SHA2_512);
+
+            User testUser1 = new User();
+            testUser1.PasswordHash = password1;
+            
+            User testUser2 = new User();
+            testUser2.PasswordHash = password2;
+
+            // Act
+            var result1 = _signInManager.CheckPasswordSignInAsync(testUser1, "password21d", false).Result;
+            var result2 = _signInManager.CheckPasswordSignInAsync(testUser2, "djSasOjd%12$78", false).Result;
+            
+            // Assert
+
+            Assert.True(result1 == SignInResult.Success );
+        }
+        
+        
+        [Fact]
+        public void SignInManager_Capable_Of_Verifying_One_Correct_Pwd_And_One_incorrect_pwd_Hashed_With_Different_Algos()
+        {
+            // Arrange
+
+            var password1 = _hasher.CreateHash("password21d", BaseCryptoItem.HashAlgorithm.SHA3_512);
+            var password2 = _hasher.CreateHash("djSasOjd%12$78", BaseCryptoItem.HashAlgorithm.SHA2_512);
+
+            User testUser1 = new User();
+            testUser1.PasswordHash = password1;
+            
+            User testUser2 = new User();
+            testUser2.PasswordHash = password2;
+
+            // Act
+            var result1 = _signInManager.CheckPasswordSignInAsync(testUser1, "password21d", false).Result;
+            var result2 = _signInManager.CheckPasswordSignInAsync(testUser2, "djSasOjd", false).Result;
+            
+            // Assert
+
+            Assert.True(result1 == SignInResult.Success && result2 == SignInResult.Failed);
+        }
+        
+        
+        
+        
 
 
         public void Dispose()
