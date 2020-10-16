@@ -73,7 +73,20 @@ namespace CommandsAndSnippetsAPI
                     s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
-            services
+                services
+                    .AddIdentity<User, IdentityRole>(options =>
+                    {
+                        options.User.RequireUniqueEmail = false;
+                    })
+                    .AddEntityFrameworkStores<IdentitiesContext>()
+                    .AddDefaultTokenProviders();
+                services
+                .AddIdentityCore<User>(opt =>
+                {
+                    opt.User.RequireUniqueEmail = true;
+                })
+                .AddSignInManager<SignInManager>();
+                services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()

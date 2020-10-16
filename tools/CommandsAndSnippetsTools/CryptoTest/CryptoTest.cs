@@ -8,7 +8,7 @@ namespace CommandsAndSnippetsTools
 
         public void EncryptPass()
         {
-            _hasher = new Hasher(null);
+            _hasher = new Hasher();
            var hash =  _hasher.HashPassword(null, "password");
 
            System.Console.WriteLine(hash);

@@ -10,12 +10,6 @@ namespace CommandsAndSnippetsAPI.Data
     {
         private const int SaltLength = 64;
         
-        private readonly ISecrets _secrets;
-
-        public Hasher(ISecrets secrets)
-        {
-            _secrets = secrets;
-        }
         
         public string CreateHash(string text, BaseCryptoItem.HashAlgorithm algorithm)
         {
@@ -25,7 +19,7 @@ namespace CommandsAndSnippetsAPI.Data
 
         public string CreateHash(string text, string saltName, BaseCryptoItem.HashAlgorithm algorithm)
         {
-            var salt = _secrets.GetSalt(saltName);
+            var salt = "TODOFIXME";
             return CreateHash(text, salt, algorithm, false);
         }
 
