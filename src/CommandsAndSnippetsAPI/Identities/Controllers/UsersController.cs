@@ -20,11 +20,13 @@ namespace CommandsAndSnippetsAPI.Controllers
     {
         private readonly IUserRepo _repo;
         private readonly IMapper _mapper;
+        private readonly ILoginManager _loginManager;
 
-        public UsersController( IMapper mapper, IUserRepo repo)
+        public UsersController( IMapper mapper, IUserRepo repo, ILoginManager loginManager)
         {
             _mapper = mapper;
             _repo = repo;
+            _loginManager = loginManager;
         }
         
         
@@ -64,7 +66,7 @@ namespace CommandsAndSnippetsAPI.Controllers
             }
 
         }
-        
+
         // TODO: Move most of this functionality to another layer to interact with Hasher.cs
         
         [HttpPost]

@@ -35,8 +35,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
 
         private async Task<bool> SaveChanges(User user)
         {
-            _context.Users.Update(user);
-            
+            var d = _context.Users.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -222,5 +221,44 @@ namespace CommandsAndSnippetsAPI.Data.Identities
             throw new NotImplementedException();
         }
         #endregion
+
+        
+        #region IUserLoginStore
+        public Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+        
+        #endregion
+
+        public Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

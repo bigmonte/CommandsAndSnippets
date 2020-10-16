@@ -35,9 +35,13 @@ namespace CommandsAndSnippetsAPI.Data
 
             switch (algorithm)
             {
-                case HashAlgorithm.SHA3_512:
+                case HashAlgorithm.SHA2_512:
                     var sha2 = new SHA2_512();
                     hash = sha2.Hash(text, salt, storeSalt);
+                    break;
+                case HashAlgorithm.SHA3_512:
+                    var sha3 = new SHA2_512();
+                    hash = sha3.Hash(text, salt, storeSalt);
                     break;
                 default:
                     throw new NotImplementedException();

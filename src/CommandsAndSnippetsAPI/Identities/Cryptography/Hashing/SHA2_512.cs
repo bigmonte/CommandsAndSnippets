@@ -1,6 +1,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace CommandsAndSnippetsAPI.Data.Cryptography
 {
@@ -24,6 +25,24 @@ namespace CommandsAndSnippetsAPI.Data.Cryptography
                 
             hash = $"[{(int) HashAlgorithm.SHA3_512}]{asString}";
             return hash;
+        }
+        
+        
+        public string Hash_PBKDF2(string plainText, string salt, bool saveSaltInResult)
+        {
+            var saltAsBytes = Encoding.ASCII.GetBytes(salt);
+
+            string hashed = ByteArrayToString(KeyDerivation.Pbkdf2(
+                password: plainText,
+                salt: saltAsBytes,
+                prf: KeyDerivationPrf.HMACSHA512, //.NET 3.1 uses HMACSHA256 here
+                iterationCount: 100000, //.NET 3.1 uses 10,000 iterations here
+                numBytesRequested: 64)); //.NET 3.1 uses 32 bytes here
+
+            if (saveSaltInResult)
+                return string.Format("[{0}]{1}{2}", (int)HashAlgorithm.PBKDF2_SHA512, salt, hashed);
+            else
+                return string.Format("[{0}]{1}", (int)HashAlgorithm.PBKDF2_SHA512, hashed);
         }
     }
 }

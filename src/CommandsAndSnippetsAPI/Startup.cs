@@ -1,5 +1,6 @@
 
 using System;
+using System.Text;
 using CommandsAndSnippetsAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data.Identities;
+using CommandsAndSnippetsAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 
 /*
@@ -122,8 +128,28 @@ namespace CommandsAndSnippetsAPI
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()
-                .AddScoped<IUserRepo, UsersRepo>();
-
+                .AddScoped<IUserRepo, UsersRepo>()
+                .AddScoped<ILoginManager, LoginManager>()
+                .Replace(new ServiceDescriptor(
+                    serviceType: typeof(IPasswordHasher<User>),
+                    implementationType: typeof(Hasher),
+                    ServiceLifetime.Scoped))
+                .AddScoped<IHasher, Hasher>()
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateActor = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "Test Issuer",
+                        ValidAudience = "Test Sign Key",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TestSingKey"))
+                    };
+                });
 
 
         }

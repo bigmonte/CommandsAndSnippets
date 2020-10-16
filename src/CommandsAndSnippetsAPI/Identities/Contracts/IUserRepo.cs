@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CommandsAndSnippetsAPI.Data.Identities
 {
-    public interface IUserRepo : IUserStore<User>, IUserPasswordStore<User>, IUserEmailStore<User>
+    public interface IUserRepo : IUserStore<User>, 
+        IUserPasswordStore<User>,
+        IUserEmailStore<User>, 
+        IUserLoginStore<User>, IUserAuthenticationTokenStore<User>
     {
         public Task<IEnumerable<User>> GetUsers();
         public Task CreateUser(User user);

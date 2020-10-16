@@ -10,6 +10,10 @@ namespace CommandsAndSnippetsAPI.Data.Cryptography
         public enum HashAlgorithm
         {
             // ReSharper disable once InconsistentNaming
+            SHA2_512 = 1,
+            // ReSharper disable once InconsistentNaming
+            PBKDF2_SHA512 = 2,
+            // ReSharper disable once InconsistentNaming
             SHA3_512 = 3
         }
 
