@@ -31,3 +31,25 @@ Dependencies for PATCH Request
 dotnet add package Microsoft.AspNetCore.JsonPatch
 dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
 ```
+
+### Extras examples
+
+Create new project
+```bash
+dotnet new xunit -n CommandAPI.Tests
+```
+
+Create new solution
+```bash
+dotnet new sln --name CommandAPISolution
+```
+
+Add project to solution
+```bash
+dotnet sln CommandAPISolution.sln add src/CommandAPI/CommandAPI.csproj test/CommandAPI.Tests/CommandAPI.Tests.csproj
+```
+
+Add reference to CommandAPI.Tests
+```bash
+dotnet add test/CommandAPI.Tests/CommandAPI.Tests.csproj reference src/ CommandAPI/CommandAPI.csproj
+```
