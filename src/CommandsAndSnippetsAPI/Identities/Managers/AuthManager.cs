@@ -22,12 +22,19 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
             _hasher = hasher;
             _mapper = mapper;
         }
-
-        public async Task <bool> PasswordIsValid(User user, string password)
+        
+        public async Task<bool> LoginAsync(string email, string password)
         {
-           var result = await  _signInManager.CheckPasswordSignInAsync(user, password, false);
-           if (result.Succeeded) return true;
-           return false;
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return false; // return error user doesn't exist
+            }
+
+            return await _userManager.CheckPasswordAsync(user, password);
+            
+            // return await GenerateAuthenticationResultForUserAsync(user);
         }
 
         private  UserCreateDto FromSignupToUser(UserSignupDto signupDto)
@@ -60,12 +67,7 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
             return await _userManager.CreateAsync(userMdl);
         }
         
-
-        public Task<AuthenticationDto> LoginAsync(string email, string password)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public Task<AuthenticationDto> RefreshTokenAsync(string token, string refreshToken)
         {
             throw new System.NotImplementedException();

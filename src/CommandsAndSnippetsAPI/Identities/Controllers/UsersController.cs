@@ -29,10 +29,18 @@ namespace CommandsAndSnippetsAPI.Identities.Controllers
             _authManager = authManager;
         }
 
-        [HttpPost]
+        [HttpPost("/register")]
         public async Task<ActionResult<IdentityResult>> SignupUserAsync(UserSignupDto userSignupDto)
         {
             return await _authManager.CreateUserAsync(userSignupDto);
+        }
+        
+        [HttpPost("/login")]
+        public async Task<ActionResult<IdentityResult>> LoginUserAsync(UserLoginDto loginDto)
+        {
+            var loginResultSucceded =  await _authManager.LoginAsync(loginDto.Email, loginDto.Password);
+            if (loginResultSucceded) return Accepted();
+            return Problem();
         }
         
            

@@ -10,9 +10,7 @@ namespace CommandsAndSnippetsAPI.Identities.Contracts
     {
         Task<IdentityResult> CreateUserAsync(UserSignupDto userSignupDto);
         
-        Task<bool> PasswordIsValid(User user, string password);
-        
-        Task<AuthenticationDto> LoginAsync(string email, string password);
+        Task<bool> LoginAsync(string email, string password);
         
         Task<AuthenticationDto> RefreshTokenAsync(string token, string refreshToken);
     }

@@ -17,13 +17,13 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
         private readonly IHasher _hasher;
         private readonly UsersRepo _usersRepo;
         public UserManager(UsersRepo store, IOptions<IdentityOptions> optionsAccessor,
-            IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
+            IHasher passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) : base(store,
             optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services,
             logger)
         {
-            _hasher = passwordHasher as IHasher;
+            _hasher = passwordHasher;
             _usersRepo = store;
         }
 

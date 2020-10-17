@@ -1,6 +1,6 @@
 namespace CommandsAndSnippetsAPI.Dtos.User
 {
-    public class UserReadDto
+    public sealed class UserReadDto
     {
         public string Id { get; init; }
 

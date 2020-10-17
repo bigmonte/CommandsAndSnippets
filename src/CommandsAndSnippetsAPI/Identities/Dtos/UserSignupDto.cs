@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CommandsAndSnippetsAPI.Dtos.User
 {
-    public class UserSignupDto
+    public sealed class UserSignupDto
     {
         [Required] [MaxLength(250)] [MinLength(3)]
         public string UserName { get; init; }

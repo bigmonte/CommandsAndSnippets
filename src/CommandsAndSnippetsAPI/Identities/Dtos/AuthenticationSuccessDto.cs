@@ -1,6 +1,6 @@
 namespace CommandsAndSnippetsAPI.Dtos.User
 {
-    public class AuthenticationSuccessDto
+    public sealed class AuthenticationSuccessDto
     {
         public string Token { get; init; }
     }

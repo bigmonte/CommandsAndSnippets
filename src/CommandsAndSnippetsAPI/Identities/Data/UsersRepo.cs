@@ -174,7 +174,7 @@ namespace CommandsAndSnippetsAPI.Data.Identities
         {
             User user = null;
             var db = _context.Users;
-            user = await db.FirstOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken: cancellationToken);
+            user = await db.FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail, cancellationToken: cancellationToken);
             return user;
         }
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CommandsAndSnippetsAPI.Identities.Cryptography
 {
-    public class Hasher : BaseCryptoItem, IHasher, IPasswordHasher<User>
+    public class Hasher : BaseCryptoItem, IHasher
     {
         private const int SaltLength = 64;
         
