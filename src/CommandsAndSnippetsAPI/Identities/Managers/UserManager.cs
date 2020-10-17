@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommandsAndSnippetsAPI.Data.Identities;
+using CommandsAndSnippetsAPI.Dtos.User;
 using CommandsAndSnippetsAPI.Identities.Contracts;
+using CommandsAndSnippetsAPI.Identities.Cryptography;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -11,13 +14,41 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
 {
     public class UserManager : UserManager<User>
     {
-        public UserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor,
+        private readonly IHasher _hasher;
+        private readonly UsersRepo _usersRepo;
+        public UserManager(UsersRepo store, IOptions<IdentityOptions> optionsAccessor,
             IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) : base(store,
             optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services,
             logger)
         {
+            _hasher = passwordHasher as IHasher;
+            _usersRepo = store;
+        }
+
+        public override Task<IdentityResult> UpdateSecurityStampAsync(User user)
+        {
+            return base.UpdateSecurityStampAsync(user);
+        }
+
+
+        public override async Task<IdentityResult> CreateAsync(User user)
+        {
+            ThrowIfDisposed();
+            var result = await ValidateUserAsync(user);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+            if (Options.Lockout.AllowedForNewUsers && SupportsUserLockout)
+            {
+                // await GetUserLockoutStore().SetLockoutEnabledAsync(user, true, CancellationToken);
+            }
+            await UpdateNormalizedUserNameAsync(user);
+            await UpdateNormalizedEmailAsync(user);
+
+            return  await _usersRepo.CreateAsync(user, CancellationToken);
         }
 
         public override async Task<bool> CheckPasswordAsync(User user, string password)
@@ -103,8 +134,8 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
             Logger.LogWarning(2, "Change password failed for user {userId}.", await GetUserIdAsync(user));
             return IdentityResult.Failed(ErrorDescriber.PasswordMismatch());
         }
+        
 
-      
         private IUserPasswordStore<User> GetPasswordStore()
         {
             if (Store is IUserPasswordStore<User> passwordStore)
@@ -114,6 +145,21 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
 
             return null;
         }
-        
+
+        public override async Task<User> FindByEmailAsync(string email)
+        {
+            User user = null;
+
+            if (Store is IUserRepo repo)
+            {
+                user = await repo.FindByEmailAsync(email, CancellationToken);
+            }
+            else
+            {
+                user = await Store.FindByNameAsync(email, CancellationToken);
+            }
+            
+            return user;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CommandsAndSnippetsAPI.Dtos.User;
 using CommandsAndSnippetsAPI.Identities.Cryptography;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -15,7 +16,7 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
     {
         private readonly IHasher _hasher;
 
-        public SignInManager(UserManager<User> userManager, IHttpContextAccessor contextAccessor,
+        public SignInManager(UserManager userManager, IHttpContextAccessor contextAccessor,
             IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor,
             ILogger<SignInManager> logger, IAuthenticationSchemeProvider schemes,
             IUserConfirmation<User> confirmation, IHasher hasher) : base(userManager, contextAccessor, claimsFactory, optionsAccessor,

@@ -5,6 +5,7 @@ using AutoMapper;
 using CommandsAndSnippetsAPI.Dtos.User;
 using CommandsAndSnippetsAPI.Identities.Contracts;
 using CommandsAndSnippetsAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // TODO Move to different project
@@ -19,13 +20,42 @@ namespace CommandsAndSnippetsAPI.Identities.Controllers
     {
         private readonly IUserRepo _repo;
         private readonly IMapper _mapper;
-        private readonly ILoginManager _loginManager;
+        private readonly IAuthManager _authManager;
 
-        public UsersController( IMapper mapper, IUserRepo repo, ILoginManager loginManager)
+        public UsersController( IMapper mapper, IUserRepo repo, IAuthManager authManager)
         {
             _mapper = mapper;
             _repo = repo;
-            _loginManager = loginManager;
+            _authManager = authManager;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<IdentityResult>> SignupUserAsync(UserSignupDto userSignupDto)
+        {
+            return await _authManager.CreateUserAsync(userSignupDto);
+        }
+        
+           
+        //[HttpPost]
+        public async Task<ActionResult<UserReadDto>> CreateRawUser(UserCreateDto userToCreate)
+        {
+            try
+            {
+                var userModel = _mapper.Map<User>(userToCreate);
+                await _repo.CreateUser(userModel);
+                await _repo.SaveChanges();
+
+                var readDto = _mapper.Map<UserReadDto>(userModel);
+
+                return CreatedAtRoute(nameof(GetUserById), new {Id = readDto.Id}, readDto);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
         
         
@@ -65,40 +95,7 @@ namespace CommandsAndSnippetsAPI.Identities.Controllers
             }
 
         }
-
-        // TODO: Move most of this functionality to another layer to interact with Hasher.cs
-        
-        [HttpPost]
-        public async Task<ActionResult<UserReadDto>> CreateUser(UserCreateDto userToCreate)
-        {
-            try
-            {
-                var userModel = _mapper.Map<User>(userToCreate);
-                await _repo.CreateUser(userModel);
-                await _repo.SaveChanges();
-
-                var readDto = _mapper.Map<UserReadDto>(userModel);
-
-                return CreatedAtRoute(nameof(GetUserById), new {Id = readDto.Id}, readDto);
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-    
-            /*  CreatedAtRoute method will:
-             *      - Return 201: Created 201 status code
-             *      - Pass back the created resource in body response
-             *      - Pass back the URI (or route) in the response header
-             */
-            
-            // Further references:
-            // https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-3.1
-            // https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller.createdatroute
-            
-        }
+     
 
         
     }

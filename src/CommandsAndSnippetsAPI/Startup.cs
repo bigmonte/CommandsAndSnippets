@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using CommandsAndSnippetsAPI.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,6 @@ using CommandsAndSnippetsAPI.Identities.Managers;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
@@ -40,7 +38,7 @@ namespace CommandsAndSnippetsAPI
         {
             services.AddCors(options =>
             {
-                options.AddPolicy(name: AllowSpecificOrigins,
+                options.AddPolicy( AllowSpecificOrigins, 
                     b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
             });
 
@@ -53,10 +51,22 @@ namespace CommandsAndSnippetsAPI
                 Password = _configuration["Password"]
             };
 
+            services
+                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; });
+
             services.AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
                 .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
                 // Inject an implementation of ISwaggerProvider with defaulted settings applied
                 .AddSwaggerGen()
+                .AddIdentity<User, IdentityRole>(options => { options.User.RequireUniqueEmail = true; })
+                .AddEntityFrameworkStores<IdentitiesContext>()
+                .AddUserManager<UserManager>()
+                .AddUserStore<UsersRepo>()
+                .AddSignInManager<SignInManager>()
+                .AddDefaultTokenProviders();
+            services.AddScoped<UsersRepo>();
+
+            services
                 .ConfigureSwaggerGen(options =>
                 {
                     {
@@ -86,22 +96,11 @@ namespace CommandsAndSnippetsAPI
                 });
 
             services
-                .AddIdentity<User, IdentityRole>(options => { options.User.RequireUniqueEmail = false; })
-                .AddEntityFrameworkStores<IdentitiesContext>()
-                .AddDefaultTokenProviders();
-            services
-                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
-                .AddSignInManager<SignInManager>();
-            services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+                .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()
-                .AddScoped<IUserRepo, UsersRepo>()
-                .AddScoped<ILoginManager, LoginManager>()
-                .Replace(new ServiceDescriptor(
-                    serviceType: typeof(IPasswordHasher<User>),
-                    implementationType: typeof(Hasher),
-                    ServiceLifetime.Scoped))
+                .AddScoped<IAuthManager, AuthManager>()
                 .AddScoped<IHasher, Hasher>()
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie()

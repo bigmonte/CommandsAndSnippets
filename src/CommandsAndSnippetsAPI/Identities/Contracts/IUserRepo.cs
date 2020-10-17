@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,10 +12,7 @@ namespace CommandsAndSnippetsAPI.Identities.Contracts
     /// Admin and APIClient
     /// </summary>
     
-    public interface IUserRepo : IUserStore<User>, 
-        IUserPasswordStore<User>,
-        IUserEmailStore<User>, 
-        IUserLoginStore<User>, IUserAuthenticationTokenStore<User>
+    public interface IUserRepo : IUserStore<User>
     {
         public Task<IEnumerable<User>> GetUsers();
         public Task CreateUser(User user);
@@ -23,5 +20,6 @@ namespace CommandsAndSnippetsAPI.Identities.Contracts
 
         public Task<User> GetUserById(string id);
 
+        Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken);
     }
 }
