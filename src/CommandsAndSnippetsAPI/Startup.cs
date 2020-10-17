@@ -11,10 +11,12 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data.Identities;
 using CommandsAndSnippetsAPI.Models;
+using CommandsAndSnippetsAPI.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
 
@@ -25,72 +27,62 @@ namespace CommandsAndSnippetsAPI
         /// <summary>
         /// This allows us to access our secrets hosted in the System.
         /// </summary>
-        
         private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration config) => _configuration = config;
-        
+
         private const string AllowSpecificOrigins = "_allowSpecificOrigins";
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddCors(options => 
-            { options.AddPolicy(name: AllowSpecificOrigins,
-                b =>
-                {
-                    b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080");
-                }); 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: AllowSpecificOrigins,
+                    b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
             });
 
             // _configuration["User"] retrieves the username on mac 
-            
+
             var builder = new SqlConnectionStringBuilder
             {
                 ConnectionString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;",
                 UserID = _configuration["UserID"],
                 Password = _configuration["Password"]
             };
-            
-            services.AddDbContext<ApiDataContext>(options =>
-            {
-                options.UseSqlServer(builder.ConnectionString);
-              
-            }).AddDbContext<IdentitiesContext>(options =>
-                {
-                    options.UseSqlServer(builder.ConnectionString);
-                });
-            
-            /*
-             
-                1. Register services to enable the use of "Controllers" throughout our application.
-    
-                2. We "MapControllers" to our endpoints. This means we make use of the 
-                Controller services, registered in the ConfigureServices method, as endpoints 
-                in the Request Pipeline. 
-           
-            */
 
+            services.AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); });
+
+            // Inject an implementation of ISwaggerProvider with defaulted settings applied
+            services.AddSwaggerGen();
+            services.ConfigureSwaggerGen(options =>
+            {
+                {
+                    options.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = "Commands And Snippets API",
+                        Version = "v1",
+                        Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
+                        Description = "Useful commands and Snippets API"
+                    });
+                }
+            });
             services
+                // Register services to enable the use of "Controllers" throughout our application.
                 .AddControllers()
                 .AddNewtonsoftJson(s =>
                 {
                     s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
-                services
-                    .AddIdentity<User, IdentityRole>(options =>
-                    {
-                        options.User.RequireUniqueEmail = false;
-                    })
-                    .AddEntityFrameworkStores<IdentitiesContext>()
-                    .AddDefaultTokenProviders();
-                services
-                    .AddIdentityCore<User>(opt =>
-                    {
-                        opt.User.RequireUniqueEmail = true;
-                    })
-                    .AddSignInManager<SignInManager>();
-                services
+            services
+                .AddIdentity<User, IdentityRole>(options => { options.User.RequireUniqueEmail = false; })
+                .AddEntityFrameworkStores<IdentitiesContext>()
+                .AddDefaultTokenProviders();
+            services
+                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
+                .AddSignInManager<SignInManager>();
+            services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()
@@ -113,7 +105,8 @@ namespace CommandsAndSnippetsAPI
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = "Test Issuer",
                         ValidAudience = "Test Sign Key",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TestSingKey"))
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("32CHARSECRETKEYTODOMOVETOSECRETS"))
                     };
                 });
         }
@@ -122,7 +115,8 @@ namespace CommandsAndSnippetsAPI
         // Use this method to configure the HTTP request pipeline.
         /// <summary>
         /// Our implementation of this method does the following -
-        /// Does use Developer Exception page if needed;
+        /// Does use Developer Exception page if needed or uses HSTS header in production;
+        /// Setting our app to use Swagger (documentation)
         /// Use Routing and Endpoints in which our controllers will get automatically configured;
         /// Configure our app to use allow CORS from the AllowSpecificOrigins;
         /// </summary>
@@ -134,6 +128,23 @@ namespace CommandsAndSnippetsAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
+
+            var swaggerOptions = new SwaggerOptions();
+            _configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+            app.UseSwaggerUI(config =>
+            {
+                config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API");
+            });
+
 
             // Cors documentation
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
@@ -142,9 +153,10 @@ namespace CommandsAndSnippetsAPI
                 .UseRouting()
                 .UseCors(AllowSpecificOrigins)
                 .UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+                {
+                    // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
+                    endpoints.MapControllers();
+                });
         }
     }
 }
