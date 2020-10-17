@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using CommandsAndSnippetsAPI.Data;
 using Microsoft.EntityFrameworkCore;
@@ -66,6 +67,14 @@ namespace CommandsAndSnippetsAPI
                             Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
                             Description = "Useful commands and Snippets API"
                         });
+                        
+                        var secScheme = new OpenApiSecurityScheme();
+                        secScheme.Description = "JWT Authorization header";
+                        options.AddSecurityDefinition("Bearer", secScheme);
+                        
+                        var secRequirement = new OpenApiSecurityRequirement();
+                        secRequirement.Add(secScheme, new []{"Bearer"});
+                        options.AddSecurityRequirement(secRequirement);
                     }
                 });
             services
