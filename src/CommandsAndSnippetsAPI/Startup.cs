@@ -102,7 +102,7 @@ namespace CommandsAndSnippetsAPI
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = "Test Issuer",
-                        ValidAudience = "Test Sign Key",
+                        ValidAudience = "Test Audience",
                         IssuerSigningKey =
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes("32CHARSECRETKEYTODOMOVETOSECRETS"))
                     };
