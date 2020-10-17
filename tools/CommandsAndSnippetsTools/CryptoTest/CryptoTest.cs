@@ -1,4 +1,4 @@
-using CommandsAndSnippetsAPI.Data;
+using CommandsAndSnippetsAPI.Identities.Cryptography;
 
 namespace CommandsAndSnippetsTools
 {

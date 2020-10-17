@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
 
-namespace CommandsAndSnippetsAPI.Data.Identities
+namespace CommandsAndSnippetsAPI.Identities.Contracts
 {
     // TODO: Only allow login in the admin frontend 
     public interface ILoginManager

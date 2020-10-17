@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommandsAndSnippetsAPI.Data.Identities;
-using CommandsAndSnippetsAPI.Dtos;
 using CommandsAndSnippetsAPI.Dtos.User;
+using CommandsAndSnippetsAPI.Identities.Contracts;
 using CommandsAndSnippetsAPI.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CommandsAndSnippetsAPI.Controllers
+// TODO Move to different project
+
+namespace CommandsAndSnippetsAPI.Identities.Controllers
 {
     // TODO: Only Admin role users would be able to access this 
 

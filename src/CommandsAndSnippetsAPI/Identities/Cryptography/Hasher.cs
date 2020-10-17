@@ -1,15 +1,12 @@
-
 using System;
-using CommandsAndSnippetsAPI.Data.Cryptography;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace CommandsAndSnippetsAPI.Data
+namespace CommandsAndSnippetsAPI.Identities.Cryptography
 {
     public class Hasher : BaseCryptoItem, IHasher, IPasswordHasher<User>
     {
         private const int SaltLength = 64;
-        
         
         public string CreateHash(string text, BaseCryptoItem.HashAlgorithm algorithm)
         {
@@ -62,7 +59,8 @@ namespace CommandsAndSnippetsAPI.Data
             return CreateHash(password, HashAlgorithm.SHA3_512);
         }
 
-        public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
+        public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword,
+            string providedPassword)
         {
             var match = MatchesHash(providedPassword, hashedPassword);
             return match ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;

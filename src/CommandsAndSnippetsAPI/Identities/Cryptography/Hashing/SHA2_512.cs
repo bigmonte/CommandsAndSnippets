@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace CommandsAndSnippetsAPI.Data.Cryptography
+namespace CommandsAndSnippetsAPI.Identities.Cryptography
 {
     // ReSharper disable once InconsistentNaming
     public class SHA2_512 : BaseCryptoItem

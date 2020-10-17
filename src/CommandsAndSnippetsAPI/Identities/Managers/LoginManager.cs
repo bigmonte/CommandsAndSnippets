@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
+using CommandsAndSnippetsAPI.Identities.Contracts;
 using CommandsAndSnippetsAPI.Models;
 
-namespace CommandsAndSnippetsAPI.Data.Identities
+namespace CommandsAndSnippetsAPI.Identities.Managers
 {
     public class LoginManager : ILoginManager
     {

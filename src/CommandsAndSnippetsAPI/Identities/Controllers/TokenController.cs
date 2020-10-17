@@ -1,4 +1,4 @@
-namespace CommandsAndSnippetsAPI.Controllers
+namespace CommandsAndSnippetsAPI.Identities.Controllers
 {
     public class TokenController
     {

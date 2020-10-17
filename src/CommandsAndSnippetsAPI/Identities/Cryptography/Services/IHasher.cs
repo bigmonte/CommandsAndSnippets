@@ -1,7 +1,5 @@
 
-using CommandsAndSnippetsAPI.Data.Cryptography;
-
-namespace CommandsAndSnippetsAPI.Data
+namespace CommandsAndSnippetsAPI.Identities.Cryptography
 {
     public interface IHasher
     { 

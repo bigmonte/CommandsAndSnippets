@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CommandsAndSnippetsAPI.Data.Cryptography;
+using CommandsAndSnippetsAPI.Identities.Cryptography;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace CommandsAndSnippetsAPI.Data.Identities
+namespace CommandsAndSnippetsAPI.Identities.Managers
 {
     public class SignInManager : SignInManager<User>
     {

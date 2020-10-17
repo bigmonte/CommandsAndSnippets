@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommandsAndSnippetsAPI.Identities.Contracts;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace CommandsAndSnippetsAPI.Data.Identities
+namespace CommandsAndSnippetsAPI.Identities.Managers
 {
     public class UserManager : UserManager<User>
     {

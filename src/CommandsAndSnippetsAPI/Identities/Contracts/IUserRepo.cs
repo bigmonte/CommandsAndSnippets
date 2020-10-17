@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace CommandsAndSnippetsAPI.Data.Identities
+namespace CommandsAndSnippetsAPI.Identities.Contracts
 {
     /// <summary>
     /// This is our Users repository.

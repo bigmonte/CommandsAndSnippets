@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CommandsAndSnippetsAPI.Data;
-using CommandsAndSnippetsAPI.Data.Cryptography;
-using CommandsAndSnippetsAPI.Data.Identities;
+using CommandsAndSnippetsAPI.Identities.Contracts;
+using CommandsAndSnippetsAPI.Identities.Cryptography;
+using CommandsAndSnippetsAPI.Identities.Managers;
 using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
