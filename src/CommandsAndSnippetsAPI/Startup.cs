@@ -18,8 +18,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
-
 
 namespace CommandsAndSnippetsAPI
 {
@@ -36,14 +34,6 @@ namespace CommandsAndSnippetsAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy( AllowSpecificOrigins, 
-                    b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
-            });
-
-            // _configuration["User"] retrieves the username on mac 
-
             var builder = new SqlConnectionStringBuilder
             {
                 ConnectionString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;",
@@ -52,51 +42,49 @@ namespace CommandsAndSnippetsAPI
             };
 
             services
-                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; });
+                .AddCors(options =>
+                {
+                    options.AddPolicy(AllowSpecificOrigins,
+                        b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
+                })
+                .AddControllers();
 
-            services.AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
-                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
-                // Inject an implementation of ISwaggerProvider with defaulted settings applied
-                .AddSwaggerGen()
-                .AddIdentity<User, IdentityRole>(options => { options.User.RequireUniqueEmail = true; })
+            services
+                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<IdentitiesContext>()
                 .AddUserManager<UserManager>()
                 .AddUserStore<UsersRepo>()
                 .AddSignInManager<SignInManager>()
                 .AddDefaultTokenProviders();
-            services.AddScoped<UsersRepo>();
 
             services
+                .AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                // Inject an implementation of ISwaggerProvider with defaulted settings applied
+                .AddSwaggerGen()
                 .ConfigureSwaggerGen(options =>
                 {
+                    options.SwaggerDoc("v1", new OpenApiInfo
                     {
-                        options.SwaggerDoc("v1", new OpenApiInfo
-                        {
-                            Title = "Commands And Snippets API",
-                            Version = "v1",
-                            Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
-                            Description = "Useful commands and Snippets API"
-                        });
-                        
-                        var secScheme = new OpenApiSecurityScheme();
-                        secScheme.Description = "JWT Authorization header";
-                        options.AddSecurityDefinition("Bearer", secScheme);
-                        
-                        var secRequirement = new OpenApiSecurityRequirement();
-                        secRequirement.Add(secScheme, new []{"Bearer"});
-                        options.AddSecurityRequirement(secRequirement);
-                    }
+                        Title = "Commands And Snippets API",
+                        Version = "v1",
+                        Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
+                        Description = "Useful commands and Snippets API"
+                    });
+
+                    var secScheme = new OpenApiSecurityScheme();
+                    secScheme.Description = "JWT Authorization header";
+                    options.AddSecurityDefinition("Bearer", secScheme);
+
+                    var secRequirement = new OpenApiSecurityRequirement();
+                    secRequirement.Add(secScheme, new[] {"Bearer"});
+                    options.AddSecurityRequirement(secRequirement);
                 });
-            services
-                // Register services to enable the use of "Controllers" throughout our application.
-                .AddControllers()
-                .AddNewtonsoftJson(s =>
-                {
-                    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+
 
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+                .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager
                 .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()
@@ -141,21 +129,17 @@ namespace CommandsAndSnippetsAPI
             {
                 app.UseHsts();
             }
-            
-            // Enable middleware to serve generated Swagger as a JSON endpoint
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
-            app.UseSwaggerUI(config =>
-            {
-                config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API");
-            });
-
 
             // Cors documentation
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
 
-            app
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger()
+                // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+                .UseSwaggerUI(config =>
+                {
+                    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API");
+                })
                 .UseRouting()
                 .UseCors(AllowSpecificOrigins)
                 .UseEndpoints(endpoints =>
