@@ -34,12 +34,14 @@ namespace CommandsAndSnippetsAPI.Identities.Managers
         {
             var pwd = signupDto.Password;
             var hash = _hasher.CreateHash(pwd, BaseCryptoItem.HashAlgorithm.SHA3_512);
-           
-            UserCreateDto userToCreate = new UserCreateDto();
-            userToCreate.Email = signupDto.Email;
-            userToCreate.PasswordHash = hash;
-            userToCreate.UserName = signupDto.UserName;
-            
+
+            UserCreateDto userToCreate = new UserCreateDto
+            {
+                Email = signupDto.Email,
+                PasswordHash = hash,
+                UserName = signupDto.UserName
+            };
+
             return userToCreate;
         }
         
