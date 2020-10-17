@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data.Identities;
 using CommandsAndSnippetsAPI.Models;
-using CommandsAndSnippetsAPI.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -51,22 +50,21 @@ namespace CommandsAndSnippetsAPI
             };
 
             services.AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
-                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); });
-
-            // Inject an implementation of ISwaggerProvider with defaulted settings applied
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerGen(options =>
-            {
+                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                // Inject an implementation of ISwaggerProvider with defaulted settings applied
+                .AddSwaggerGen()
+                .ConfigureSwaggerGen(options =>
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo
                     {
-                        Title = "Commands And Snippets API",
-                        Version = "v1",
-                        Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
-                        Description = "Useful commands and Snippets API"
-                    });
-                }
-            });
+                        options.SwaggerDoc("v1", new OpenApiInfo
+                        {
+                            Title = "Commands And Snippets API",
+                            Version = "v1",
+                            Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
+                            Description = "Useful commands and Snippets API"
+                        });
+                    }
+                });
             services
                 // Register services to enable the use of "Controllers" throughout our application.
                 .AddControllers()
@@ -132,10 +130,7 @@ namespace CommandsAndSnippetsAPI
             {
                 app.UseHsts();
             }
-
-            var swaggerOptions = new SwaggerOptions();
-            _configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
-
+            
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
 
