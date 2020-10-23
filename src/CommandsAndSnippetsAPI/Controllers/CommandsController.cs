@@ -12,21 +12,20 @@ namespace CommandsAndSnippetsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
     public class CommandsController : ControllerBase
     {
         private readonly ICommandsAndSnippetsAPIRepo _commandsRepo;
         private readonly IMapper _mapper;
-        
-        
+
+
         // Constructor dependency injection
         public CommandsController(ICommandsAndSnippetsAPIRepo commandsRepo, IMapper mapper)
         {
             _commandsRepo = commandsRepo;
             _mapper = mapper;
         }
-        
-        [HttpGet]   
+
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> GetCommands()
         {
             try
@@ -39,15 +38,14 @@ namespace CommandsAndSnippetsAPI.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-
         }
-        
+
         [HttpGet("{id}", Name = "GetCommandById")]
-        public async Task<ActionResult<CommandReadDto>> GetCommandById(int id)
+        public async Task<ActionResult<CommandReadDto>> GetCommandByIdAsync(int id)
         {
             try
             {
-                var commandItem = await _commandsRepo.GetCommandById(id);
+                var commandItem = await _commandsRepo.GetCommandByIdAsync(id);
                 if (commandItem == null)
                 {
                     return NotFound();
@@ -60,8 +58,27 @@ namespace CommandsAndSnippetsAPI.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-  
         }
+
+        public ActionResult<CommandReadDto> GetCommandById(int id)
+        {
+            try
+            {
+                var commandItem = _commandsRepo.GetCommandById(id);
+                if (commandItem == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(_mapper.Map<CommandReadDto>(commandItem));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<CommandReadDto>> CreateCommand(CommandCreateDto commandToCreate)
@@ -74,55 +91,54 @@ namespace CommandsAndSnippetsAPI.Controllers
 
                 var cmdReadDto = _mapper.Map<CommandReadDto>(cmdModel);
 
-                return CreatedAtRoute(nameof(GetCommandById), new {Id = cmdReadDto.Id}, cmdReadDto);
-
+                return CreatedAtRoute(nameof(GetCommandByIdAsync), new {Id = cmdReadDto.Id}, cmdReadDto);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-    
+
             /*  CreatedAtRoute method will:
              *      - Return 201: Created 201 status code
              *      - Pass back the created resource in body response
              *      - Pass back the URI (or route) in the response header
              */
-            
+
             // Further references:
             // https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-3.1
             // https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller.createdatroute
-            
         }
-        
+
         // We actually hate this
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCommand(int id, CommandUpdateDto commandToUpdate)
         {
             try
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandById(id);
-            
+                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
+
                 if (cmdModelFromRepo == null)
                 {
                     return NotFound();
                 }
 
                 _mapper.Map(commandToUpdate, cmdModelFromRepo);
-            
+
                 //_apiRepo.UpdateCommand(cmdModelFromRepo);
 
                 await _commandsRepo.SaveCommandsChanges();
 
                 // Return 204 (No Content)
                 //return NoContent();
-                var cmd = new CommandReadDto{
+                var cmd = new CommandReadDto
+                {
                     Id = id,
                     HowTo = commandToUpdate.HowTo,
                     CommandLine = commandToUpdate.CommandLine,
                     Platform = commandToUpdate.Platform
-                }; 
-            
+                };
+
                 // create a new ReadDTO Because we want the ID?
                 // TODO fix that 
 
@@ -134,18 +150,16 @@ namespace CommandsAndSnippetsAPI.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-        
-
         }
 
         [HttpPatch("{id}")]
         public async Task<ActionResult> PartialCommandUpdate(
-            int id, 
+            int id,
             JsonPatchDocument<CommandUpdateDto> patchDoc)
         {
             try
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandById(id);
+                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
                 if (cmdModelFromRepo == null)
                 {
                     return NotFound();
@@ -172,8 +186,8 @@ namespace CommandsAndSnippetsAPI.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
-            
+
+
             /*            Example patch operation
              * [
                     {
@@ -190,11 +204,12 @@ namespace CommandsAndSnippetsAPI.Controllers
         {
             try
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandById(id);
+                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
                 if (cmdModelFromRepo == null)
                 {
                     return NotFound();
                 }
+
                 _commandsRepo.DeleteCommand(cmdModelFromRepo);
                 await _commandsRepo.SaveCommandsChanges();
 
@@ -208,8 +223,6 @@ namespace CommandsAndSnippetsAPI.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-
         }
-
     }
 }

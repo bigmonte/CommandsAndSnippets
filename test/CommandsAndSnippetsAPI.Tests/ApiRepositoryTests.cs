@@ -56,7 +56,7 @@ namespace CommandsAndSnippetsAPI.Tests
             
             // Act
 
-            var result = controller.GetCommands();
+            var result = controller.GetCommands().Result;
             
             // Assert
             Assert.IsType<OkObjectResult>(result.Result);
@@ -74,7 +74,7 @@ namespace CommandsAndSnippetsAPI.Tests
             
             // Act
 
-            var result = controller.GetCommands();
+            var result = controller.GetCommands().Result;
             
             // Assert
             Assert.IsType<OkObjectResult>(result.Result);
@@ -107,11 +107,11 @@ namespace CommandsAndSnippetsAPI.Tests
         public void GetCommandById_Returns404NotFound_WhenNonExistentIDProvided()
         {
             // Arrange
-            _mockApiRepo.Setup(repo => repo.GetCommandById(0)).Returns(() => null);
+            _mockApiRepo.Setup(repo => repo.GetCommandByIdAsync(0)).Returns(() => null);
             var controller = new CommandsController(_mockApiRepo.Object, _mapper);
             
             // Act 
-            var result = controller.GetCommandById(1);
+            var result = controller.GetCommandByIdAsync(1).Result;
             
             // Assert
 
@@ -120,20 +120,20 @@ namespace CommandsAndSnippetsAPI.Tests
         
         
         [Fact]
-        public  void GetCommandById_Returns200OK_WhenValidIDProvided()
+        public void GetCommandById_Returns200OK_WhenValidIDProvided()
         {
-            
             // Arrange
-            _mockApiRepo.Setup(repo =>  repo.GetCommandById(0).Result).Returns(
-                new Command {Id = 1, HowTo = "Mock", Platform = "MockPL", CommandLine = "Mock"});
+            _mockApiRepo.Setup(repo => repo.GetCommandById(0)).Returns(
+                new Command {Id = 0, HowTo = "Mock", Platform = "MockPL", CommandLine = "Mock"});
+            
             var controller = new CommandsController(_mockApiRepo.Object, _mapper);
             
             // Act 
-            var result = controller.GetCommandById(1);
+            var result = controller.GetCommandById(0);
             
             // Assert
 
-            Assert.IsType<NotFoundResult>(result.Result);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
         
         

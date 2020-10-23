@@ -13,7 +13,9 @@ namespace CommandsAndSnippetsAPI.Data
         Task<IEnumerable<Command>> GetCommandsWithPlatform(string platform);
         Task<IEnumerable<Command>> SearchCommands(string text);
 
-        Task<Command> GetCommandById(int id);
+        Task<Command> GetCommandByIdAsync(int id);
+        Command GetCommandById(int id);
+        
         void CreateCommand (Command command);
         void UpdateCommand(Command command);
         void DeleteCommand(Command command);

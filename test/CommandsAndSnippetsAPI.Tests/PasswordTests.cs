@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CommandsAndSnippetsAPI.Identities.Contracts;
+using CommandsAndSnippetsAPI.Data.Identities;
 using CommandsAndSnippetsAPI.Identities.Cryptography;
 using CommandsAndSnippetsAPI.Identities.Managers;
 using CommandsAndSnippetsAPI.Models;
@@ -15,7 +15,7 @@ namespace CommandsAndSnippetsAPI.Tests
     public class PasswordTests : IDisposable
     {
         private readonly Hasher _hasher;
-        private readonly Mock<IUserRepo> _mockApiRepo = new Mock<IUserRepo>();
+        private readonly Mock<UsersRepo> _mockApiRepo = new Mock<UsersRepo>();
 
         private readonly SignInManager _signInManager;
         private readonly UserManager _userManager;

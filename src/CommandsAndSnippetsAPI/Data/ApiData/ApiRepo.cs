@@ -27,11 +27,19 @@ namespace CommandsAndSnippetsAPI.Data
             return await db.ToListAsync();
         }
 
-        public async Task<Command> GetCommandById(int id)
+        public async Task<Command> GetCommandByIdAsync(int id)
         {
             var db = _apiDataContext.CommandItems;
             return await db.FirstOrDefaultAsync(p => p.Id == id);
         }
+
+
+        public Command GetCommandById(int id)
+        {
+            var db = _apiDataContext.CommandItems;
+            return  db.FirstOrDefault(p => p.Id == id);
+        }
+
 
         public async void CreateCommand(Command command)
         {
