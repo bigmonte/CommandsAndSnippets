@@ -1,13 +1,5 @@
 using System;
-using System.Collections.Generic;
-using CommandsAndSnippetsAPI.Data.Identities;
 using CommandsAndSnippetsAPI.Identities.Cryptography;
-using CommandsAndSnippetsAPI.Identities.Managers;
-using CommandsAndSnippetsAPI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Moq;
 using Xunit;
 
 namespace CommandsAndSnippetsAPI.Tests
@@ -19,6 +11,11 @@ namespace CommandsAndSnippetsAPI.Tests
         public PasswordTests()
         {
             _hasher = new Hasher();
+        }
+
+
+        public void Dispose()
+        {
         }
 
         [Fact]
@@ -77,11 +74,6 @@ namespace CommandsAndSnippetsAPI.Tests
             // Assert
 
             Assert.False(result);
-        }
-        
-
-        public void Dispose()
-        {
         }
     }
 }

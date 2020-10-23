@@ -18,6 +18,12 @@ namespace CommandsAndSnippetsAPI.Tests
             };
         }
 
+
+        public void Dispose()
+        {
+            testCommand = null;
+        }
+
         [Fact]
         public void CanChangeHowTo()
         {
@@ -32,12 +38,6 @@ namespace CommandsAndSnippetsAPI.Tests
             // Act
             testCommand.CommandLine = "dotnet test";
             Assert.Equal("dotnet test", testCommand.CommandLine);
-        }
-
-
-        public void Dispose()
-        {
-            testCommand = null;
         }
     }
 }
