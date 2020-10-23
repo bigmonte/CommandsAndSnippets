@@ -2,13 +2,13 @@ namespace CommandsAndSnippetsAPI.Dtos
 {
     public sealed class CommandReadDto
     {
-        public int Id { get; init; }
+        public int Id { get; set; }
         
-        public string HowTo { get; init; }
+        public string HowTo { get; set; }
         
-        public string Platform { get; init; }
+        public string Platform { get; set; }
         
-        public string CommandLine { get; init; }
+        public string CommandLine { get; set; }
         
     }
 }

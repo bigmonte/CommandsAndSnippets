@@ -7,13 +7,13 @@ namespace CommandsAndSnippetsAPI.Dtos
         // Equal as CommandCreateDto
         
         [Required][MaxLength(250)]
-        public string HowTo { get; init; }
+        public string HowTo { get; set; }
         
         [Required]
-        public string Platform { get; init; }
+        public string Platform { get; set; }
         
         [Required]
-        public string CommandLine { get; init; }
+        public string CommandLine { get; set; }
         
         
         

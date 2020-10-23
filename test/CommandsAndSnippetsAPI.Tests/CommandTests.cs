@@ -10,14 +10,14 @@ namespace CommandsAndSnippetsAPI.Tests
 
         public CommandTests()
         {
-            var testCommand = new Command
+            testCommand = new Command
             {
                 HowTo = "Do something",
                 Platform = "xUnit",
                 CommandLine = "dotnet test"
-            };  
+            };
         }
-        
+
         [Fact]
         public void CanChangeHowTo()
         {
@@ -25,7 +25,7 @@ namespace CommandsAndSnippetsAPI.Tests
             testCommand.HowTo = "Execute Unit Tests";
             Assert.Equal("Execute Unit Tests", testCommand.HowTo);
         }
-        
+
         [Fact]
         public void CanChangeCommandLine()
         {
@@ -33,8 +33,7 @@ namespace CommandsAndSnippetsAPI.Tests
             testCommand.CommandLine = "dotnet test";
             Assert.Equal("dotnet test", testCommand.CommandLine);
         }
-        
-        
+
 
         public void Dispose()
         {
