@@ -1,3 +1,5 @@
+using System;
+
 namespace CommandsAndSnippetsAPI.Dtos
 {
     public sealed class CommandReadDto

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CommandsAndSnippetsAPI.Models
@@ -18,5 +19,9 @@ namespace CommandsAndSnippetsAPI.Models
         
         [Required]
         public string CommandLine { get; set; }
+        
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        public DateTime CreatedDate { get; set; }
     }
 }

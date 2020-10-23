@@ -91,7 +91,7 @@ namespace CommandsAndSnippetsAPI.Controllers
 
                 var cmdReadDto = _mapper.Map<CommandReadDto>(cmdModel);
 
-                return CreatedAtRoute(nameof(GetCommandByIdAsync), new {Id = cmdReadDto.Id}, cmdReadDto);
+                return CreatedAtRoute(nameof(GetCommandById), new {Id = cmdReadDto.Id}, cmdReadDto);
             }
             catch (Exception e)
             {
@@ -129,21 +129,8 @@ namespace CommandsAndSnippetsAPI.Controllers
 
                 await _commandsRepo.SaveCommandsChanges();
 
-                // Return 204 (No Content)
-                //return NoContent();
-                var cmd = new CommandReadDto
-                {
-                    Id = id,
-                    HowTo = commandToUpdate.HowTo,
-                    CommandLine = commandToUpdate.CommandLine,
-                    Platform = commandToUpdate.Platform
-                };
-
-                // create a new ReadDTO Because we want the ID?
-                // TODO fix that 
-
                 // Return updated Resource
-                return Ok(_mapper.Map<CommandReadDto>(cmd));
+                return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
             }
             catch (Exception e)
             {

@@ -14,8 +14,6 @@ namespace CommandsAndSnippetsAPI.Dtos
         
         [Required]
         public string CommandLine { get; set; }
-        
-        
-        
+
     }
 }

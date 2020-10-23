@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CommandsAndSnippetsAPI.Dtos
@@ -13,5 +14,7 @@ namespace CommandsAndSnippetsAPI.Dtos
         
         [Required]
         public string CodeSnippet { get; set; }
+        
+        public DateTime CreatedDate { get; } = DateTime.Now;
     }
 }
