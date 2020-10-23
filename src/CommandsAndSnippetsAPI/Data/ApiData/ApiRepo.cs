@@ -104,8 +104,8 @@ namespace CommandsAndSnippetsAPI.Data
 
         public Snippet GetSnippetById(int id)
         {
-            // TODO: make me 
-            throw new NotImplementedException();
+            var db = _apiDataContext.SnippetItems;
+            return  db.FirstOrDefault(p => p.Id == id);
         }
 
         public void CreateSnippet(Snippet snippet)
@@ -118,12 +118,16 @@ namespace CommandsAndSnippetsAPI.Data
             _apiDataContext.SnippetItems.Add(snippet);
         }
 
-        public void UpdateSnippet(Snippet command) { /* nothing here */ }
+        public void UpdateSnippet(Snippet snippet) { /* nothing here */ }
 
         public void DeleteSnippet(Snippet command)
         {
-            // TODO: make me 
-            throw new NotImplementedException();
+            if(command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
+            _apiDataContext.SnippetItems.Remove(command);
         }
     }
 }
