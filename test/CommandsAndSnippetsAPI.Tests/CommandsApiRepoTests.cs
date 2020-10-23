@@ -13,14 +13,14 @@ using Xunit;
 
 namespace CommandsAndSnippetsAPI.Tests
 {
-    public class ApiRepositoryTests : IDisposable
+    public class CommandsApiRepoTests : IDisposable
     {
         private MapperConfiguration _configuration;
         private IMapper _mapper;
         private Mock<ICommandsAndSnippetsAPIRepo> _mockApiRepo = new Mock<ICommandsAndSnippetsAPIRepo>();
         private CommandsProfile _realProfile = new CommandsProfile();
 
-        public ApiRepositoryTests()
+        public CommandsApiRepoTests()
         {
             _configuration = new MapperConfiguration(cfg => cfg.AddProfile(_realProfile));
             _mapper = new Mapper(_configuration);
