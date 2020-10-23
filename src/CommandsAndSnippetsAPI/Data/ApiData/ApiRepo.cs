@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommandsAndSnippetsAPI.Data
 {
-    public class ApiRepo : ICommandsAndSnippetsAPIRepo, ISnippetsAPIRepo
+    public class ApiRepo : ICommandsApiRepo, ISnippetsAPIRepo
     {
         private readonly ApiDataContext _apiDataContext;
         

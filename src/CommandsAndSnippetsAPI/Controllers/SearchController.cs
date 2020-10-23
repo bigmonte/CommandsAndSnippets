@@ -11,10 +11,10 @@ namespace CommandsAndSnippetsAPI.Controllers
     [ApiController]
     public class SearchController: ControllerBase
     {
-        private readonly ICommandsAndSnippetsAPIRepo _apiRepo;
+        private readonly ICommandsApiRepo _apiRepo;
         private readonly IMapper _mapper;
         
-        public SearchController(ICommandsAndSnippetsAPIRepo apiRepo, IMapper mapper)
+        public SearchController(ICommandsApiRepo apiRepo, IMapper mapper)
         {
             _apiRepo = apiRepo;
             _mapper = mapper;

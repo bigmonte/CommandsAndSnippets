@@ -86,7 +86,7 @@ namespace CommandsAndSnippetsAPI
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager
                 .AddScoped<IUserRepo, UsersRepo>()
-                .AddScoped<ICommandsAndSnippetsAPIRepo, ApiRepo>()
+                .AddScoped<ICommandsApiRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>()
                 .AddScoped<IAuthManager, AuthManager>()
                 .AddScoped<IHasher, Hasher>()

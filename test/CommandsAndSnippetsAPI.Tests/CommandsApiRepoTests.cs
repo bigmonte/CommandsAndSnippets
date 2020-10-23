@@ -17,7 +17,7 @@ namespace CommandsAndSnippetsAPI.Tests
     {
         private MapperConfiguration _configuration;
         private IMapper _mapper;
-        private Mock<ICommandsAndSnippetsAPIRepo> _mockApiRepo = new Mock<ICommandsAndSnippetsAPIRepo>();
+        private Mock<ICommandsApiRepo> _mockApiRepo = new Mock<ICommandsApiRepo>();
         private CommandsProfile _realProfile = new CommandsProfile();
 
         public CommandsApiRepoTests()

@@ -6,7 +6,7 @@ namespace CommandsAndSnippetsAPI.Data
 {
     // Repository Interface
     
-    public interface ICommandsAndSnippetsAPIRepo
+    public interface ICommandsApiRepo
     {
         Task<bool> SaveCommandsChanges();
         Task<List<Command>> GetCommands();

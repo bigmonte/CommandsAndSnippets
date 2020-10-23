@@ -14,12 +14,12 @@ namespace CommandsAndSnippetsAPI.Controllers
     [ApiController]
     public class CommandsController : ControllerBase
     {
-        private readonly ICommandsAndSnippetsAPIRepo _commandsRepo;
+        private readonly ICommandsApiRepo _commandsRepo;
         private readonly IMapper _mapper;
 
 
         // Constructor dependency injection
-        public CommandsController(ICommandsAndSnippetsAPIRepo commandsRepo, IMapper mapper)
+        public CommandsController(ICommandsApiRepo commandsRepo, IMapper mapper)
         {
             _commandsRepo = commandsRepo;
             _mapper = mapper;
