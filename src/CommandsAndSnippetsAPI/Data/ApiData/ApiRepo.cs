@@ -74,6 +74,20 @@ namespace CommandsAndSnippetsAPI.Data
             return q.ToList();
         }
         
+        public async Task<IEnumerable<Snippet>> SearchSnippets(string text)
+        {
+            var q =
+                from d in GetSnippets()
+                where d.Platform.ToLower().Contains(text.ToLower())
+                      || d.CodeSnippet.ToLower().Contains(text.ToLower())
+                      || d.HowTo.ToLower().Contains(text.ToLower())
+                select d;
+            
+            return q.ToList();
+        }
+        
+        
+        
         public void UpdateCommand(Command command) { /* nothing here */ }
 
         public void DeleteCommand(Command command)

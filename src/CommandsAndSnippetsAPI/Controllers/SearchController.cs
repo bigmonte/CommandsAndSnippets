@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CommandsAndSnippetsAPI.Controllers
 {
-    [Route("api/commands/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SearchController: ControllerBase
     {
-        private readonly ICommandsApiRepo _apiRepo;
+        private readonly ICommandsApiRepo _commandsApiRepo;
+        private readonly ISnippetsAPIRepo _snippetsApiRepo;
         private readonly IMapper _mapper;
         
-        public SearchController(ICommandsApiRepo apiRepo, IMapper mapper)
+        public SearchController(
+            ICommandsApiRepo commandsApiRepo, 
+            ISnippetsAPIRepo snippetsApiRepo,
+            IMapper mapper)
         {
-            _apiRepo = apiRepo;
+            _commandsApiRepo = commandsApiRepo;
+            _snippetsApiRepo = snippetsApiRepo;
             _mapper = mapper;
         }
 
@@ -24,17 +29,27 @@ namespace CommandsAndSnippetsAPI.Controllers
         [HttpGet("platform/{platform}", Name = "CommandsWithPlatform")]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> CommandsWithPlatform(string platform)
         {
-            var commandsWithPlatform = await _apiRepo.GetCommandsWithPlatform(platform);
+            var commandsWithPlatform = await _commandsApiRepo.GetCommandsWithPlatform(platform);
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandsWithPlatform));
         }
         
         
-        [HttpGet("{text}")]
+        [HttpGet("commands/{text}")]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> SearchCommand(string text)
         {
-            var searchResult = await _apiRepo.SearchCommands(text);
+            var searchResult = await _commandsApiRepo.SearchCommands(text);
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(searchResult));
         }
+        
+        
+        [HttpGet("snippets/{text}")]
+        public async Task<ActionResult<IEnumerable<SnippetReadDto>>> SearchSnippet(string text)
+        {
+            var searchResult = await _snippetsApiRepo.SearchSnippets(text);
+            return Ok(_mapper.Map<IEnumerable<SnippetReadDto>>(searchResult));
+        }
+        
+        
 
     }
 }
