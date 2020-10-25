@@ -134,12 +134,12 @@ namespace CommandsAndSnippetsAPI.Controllers
             {
                 return NotFound();
             }
-            // TODO: Delete Snippet
             
             _snippetsRepo.DeleteSnippet(snippetModelFromRepo);
             _snippetsRepo.SaveSnippetsChanges();
 
-            return NoContent();
+            // return NoContent();
+            return Ok(_mapper.Map<SnippetReadDto>(snippetModelFromRepo));
         }
     }
 }
