@@ -26,7 +26,7 @@ namespace CommandsAndSnippetsAPI.Controllers
         }
 
         
-        [HttpGet("platform/{platform}", Name = "CommandsWithPlatform")]
+        [HttpGet("commands/platform/{platform}", Name = "CommandsWithPlatform")]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> CommandsWithPlatform(string platform)
         {
             var commandsWithPlatform = await _commandsApiRepo.GetCommandsWithPlatform(platform);
