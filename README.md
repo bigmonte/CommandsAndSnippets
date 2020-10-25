@@ -6,8 +6,10 @@ An proof of concept REST API in .NET Core that allows the user to insert and edi
 
 ## Available frontends for this project
 
-* [Commands and Snippets Frontend (Quasar)](https://github.com/bigmonte/CASQuasarFrontend)
+* [Commands and Snippets Frontend - Angular/Bootstrap](https://github.com/bigmonte/CASNgFrontend)
 
-* [Commands and Snippets Frontend (Vue + Bootstrap)](https://github.com/bigmonte/CASVueFrontend) 
+* [Commands and Snippets Frontend - Vue.JS/Quasar](https://github.com/bigmonte/CASQuasarFrontend)
 
-* [Commands and Snippets Frontend (Angular + Bootstrap)](https://github.com/bigmonte/CASNgFrontend) (WIP)
+* [Commands and Snippets Frontend - Vue.JS/Quasar (TypeScript port)](https://github.com/bigmonte/CASQuasarTSFrontend)
+
+* [Commands and Snippets Frontend - Vue.JS/Bootstrap)](https://github.com/bigmonte/CASVueFrontend) 
