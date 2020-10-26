@@ -41,6 +41,7 @@ namespace CommandsAndSnippetsAPI
                 Password = _configuration["Password"]
             };
 
+            // Policies
             services
                 .AddCors(options =>
                 {
@@ -49,6 +50,7 @@ namespace CommandsAndSnippetsAPI
                 })
                 .AddControllers();
 
+            // User management 
             services
                 .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<IdentitiesContext>()
@@ -57,6 +59,7 @@ namespace CommandsAndSnippetsAPI
                 .AddSignInManager<SignInManager>()
                 .AddDefaultTokenProviders();
 
+            // Database Context and Swagger
             services
                 .AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
                 .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
@@ -81,7 +84,7 @@ namespace CommandsAndSnippetsAPI
                     options.AddSecurityRequirement(secRequirement);
                 });
 
-
+            // Registering 'services' and Authentication, Cookies, JWT
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager

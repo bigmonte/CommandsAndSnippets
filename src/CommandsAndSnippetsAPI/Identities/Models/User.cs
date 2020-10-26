@@ -22,12 +22,10 @@ namespace CommandsAndSnippetsAPI.Models
             Email = email;
         }
 
-#if DEBUG
         public User()
         {
             
         }
-#endif
 
         /// <summary>
         /// Gets or sets the primary key for this user.

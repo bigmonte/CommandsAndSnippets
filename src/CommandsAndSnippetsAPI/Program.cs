@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CommandsAndSnippetsAPI
 {
@@ -13,6 +14,13 @@ namespace CommandsAndSnippetsAPI
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    #if DEBUG
+                    logging.ClearProviders();
+                    logging.AddDebug();
+                    #endif
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
