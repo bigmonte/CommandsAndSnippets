@@ -1,6 +1,7 @@
-using CommandsAndSnippetsAPI.Identities.Cryptography;
 
-namespace CommandsAndSnippetsTools
+using IdentitiesServer.Identities.Cryptography;
+
+namespace IdentitiesServerTools
 {
     public class CryptoTest
     {

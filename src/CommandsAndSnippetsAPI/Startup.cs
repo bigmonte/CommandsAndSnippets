@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using CommandsAndSnippetsAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -9,14 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
-using CommandsAndSnippetsAPI.Data.Identities;
-using CommandsAndSnippetsAPI.Identities.Contracts;
-using CommandsAndSnippetsAPI.Identities.Cryptography;
-using CommandsAndSnippetsAPI.Identities.Managers;
-using CommandsAndSnippetsAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CommandsAndSnippetsAPI
@@ -49,20 +40,11 @@ namespace CommandsAndSnippetsAPI
                         b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
                 })
                 .AddControllers();
-
-            // User management 
-            services
-                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
-                .AddEntityFrameworkStores<IdentitiesContext>()
-                .AddUserManager<UserManager>()
-                .AddUserStore<UsersRepo>()
-                .AddSignInManager<SignInManager>()
-                .AddDefaultTokenProviders();
+            
 
             // Database Context and Swagger
             services
                 .AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
-                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
                 // Inject an implementation of ISwaggerProvider with defaulted settings applied
                 .AddSwaggerGen()
                 .ConfigureSwaggerGen(options =>
@@ -87,28 +69,9 @@ namespace CommandsAndSnippetsAPI
             // Registering 'services' and Authentication, Cookies, JWT
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-                .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager
-                .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<ICommandsApiRepo, ApiRepo>()
-                .AddScoped<ISnippetsAPIRepo, ApiRepo>()
-                .AddScoped<IAuthManager, AuthManager>()
-                .AddScoped<IHasher, Hasher>()
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddCookie()
-                .AddJwtBearer(jwtBearerOptions =>
-                {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateActor = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "Test Issuer",
-                        ValidAudience = "Test Audience",
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("32CHARSECRETKEYTODOMOVETOSECRETS"))
-                    };
-                });
+                .AddScoped<ISnippetsAPIRepo, ApiRepo>();
+
         }
 
         // This method gets called by the runtime.

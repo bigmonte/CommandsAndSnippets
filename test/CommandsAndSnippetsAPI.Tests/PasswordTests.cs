@@ -1,5 +1,5 @@
 using System;
-using CommandsAndSnippetsAPI.Identities.Cryptography;
+using IdentitiesServer.Identities.Cryptography;
 using Xunit;
 
 namespace CommandsAndSnippetsAPI.Tests

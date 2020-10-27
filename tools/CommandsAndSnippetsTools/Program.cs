@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommandsAndSnippetsTools.DumpTools;
 using CommandsAndSnippetsTools.Tools;
+using IdentitiesServerTools;
 
 namespace CommandsAndSnippetsTools
 {
