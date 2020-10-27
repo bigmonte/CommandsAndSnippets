@@ -57,13 +57,13 @@ namespace CommandsAndSnippetsAPI
                         Description = "Useful commands and Snippets API"
                     });
 
-                    var secScheme = new OpenApiSecurityScheme();
+                    /*var secScheme = new OpenApiSecurityScheme();
                     secScheme.Description = "JWT Authorization header";
                     options.AddSecurityDefinition("Bearer", secScheme);
 
                     var secRequirement = new OpenApiSecurityRequirement();
                     secRequirement.Add(secScheme, new[] {"Bearer"});
-                    options.AddSecurityRequirement(secRequirement);
+                    options.AddSecurityRequirement(secRequirement);*/
                 });
 
             // Registering 'services' and Authentication, Cookies, JWT

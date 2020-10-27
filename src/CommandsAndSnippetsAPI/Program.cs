@@ -18,8 +18,8 @@ namespace CommandsAndSnippetsAPI
                 {
                     #if DEBUG
                     logging.ClearProviders();
-                    logging.AddDebug();
-                    #endif
+                    logging.AddConsole();
+#endif
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

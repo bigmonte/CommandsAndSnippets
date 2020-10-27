@@ -44,7 +44,7 @@ namespace IdentitiesServer.Identities.Controllers
         }
         
            
-        //[HttpPost]
+        [HttpPost]
         public async Task<ActionResult<UserReadDto>> CreateRawUser(UserCreateDto userToCreate)
         {
             try
