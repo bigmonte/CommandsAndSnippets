@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,23 @@ namespace UsersServer
 
         private const string AllowSpecificOrigins = "_allowSpecificOrigins";
 
+        // Initialize some test roles. In the real world, these would be setup explicitly by a role manager
+        private string[] roles = new[] { "User", "Manager", "Administrator" };
+        
+        // https://devblogs.microsoft.com/aspnet/bearer-token-authentication-in-asp-net-core/
+        private async Task InitializeRoles(RoleManager<IdentityRole> roleManager)
+        {
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    var newRole = new IdentityRole(role);
+                    await roleManager.CreateAsync(newRole);
+                    // In the real world, there might be claims associated with roles
+                    // _roleManager.AddClaimAsync(newRole, new )
+                }
+            }
+        }
         public void ConfigureServices(IServiceCollection services)
         {
             var builder = new SqlConnectionStringBuilder
@@ -130,6 +148,8 @@ namespace UsersServer
                     // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
                     endpoints.MapControllers();
                 });
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
     }
 }

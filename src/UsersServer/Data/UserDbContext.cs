@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UsersServer.Data.Identities
 {
-    public sealed class UserDbContext : IdentityDbContext<User>
+    public sealed class UserDbContext : IdentityDbContext<User, UserRole, string>
     {
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {
