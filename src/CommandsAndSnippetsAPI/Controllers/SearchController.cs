@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Data;
 using CommandsAndSnippetsAPI.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommandsAndSnippetsAPI.Controllers
 {
+    [Authorize(Policy = "ApiUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class SearchController: ControllerBase

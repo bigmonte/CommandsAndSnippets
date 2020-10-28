@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CommandsAndSnippetsAPI.Migrations.ApiData
+namespace CommandsAndSnippetsAPI.Migrations
 {
-    public partial class UpdatedMigration : Migration
+    public partial class newmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
