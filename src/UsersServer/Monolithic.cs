@@ -24,34 +24,11 @@ using UsersServer.Managers;
 
 namespace UsersServer
 {
-    public class Startup
+    // This is not a good approach, just for rapid testing
+    public static class Monolithic
     {
-        /// <summary>
-        /// This allows us to access our secrets hosted in the System.
-        /// </summary>
-        private readonly IConfiguration _configuration;
-
-        public Startup(IConfiguration config) => _configuration = config;
-
-        private const string AllowSpecificOrigins = "_allowSpecificOrigins";
-
-        public void ConfigureServices(IServiceCollection services)
+        public static void AddAuthServerServices(this IServiceCollection services, SqlConnectionStringBuilder builder, string origins, IConfiguration _configuration)
         {
-            var builder = new SqlConnectionStringBuilder
-            {
-                ConnectionString = "Server=localhost,1433\\Catalog=sql1;Database=sql1;",
-                UserID = _configuration["UserID"],
-                Password = _configuration["Password"]
-            };
-
-            // Policies
-            services
-                .AddCors(options =>
-                {
-                    options.AddPolicy(AllowSpecificOrigins,
-                        b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
-                })
-                .AddControllers();
             services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
             services.AddScoped<IJwtFactory, JwtFactory>();
 
@@ -59,7 +36,6 @@ namespace UsersServer
             services
                 .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<UserDbContext>()
-                
                 .AddUserManager<UserManager>()
                 .AddUserStore<UsersRepo>()
                 .AddSignInManager<SignInManager>();
@@ -94,8 +70,8 @@ namespace UsersServer
                 .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<IAuthManager, AuthManager>()
                 .AddScoped<IHasher, Hasher>();
-            
-            
+
+
             // Register the ConfigurationBuilder instance of AuthSettings
             var authSettings = _configuration.GetSection(nameof(AuthSettings));
             services.Configure<AuthSettings>(authSettings);
@@ -134,7 +110,6 @@ namespace UsersServer
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             }).AddJwtBearer(configureOptions =>
             {
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
@@ -149,6 +124,7 @@ namespace UsersServer
                         {
                             context.Response.Headers.Add("Token-Expired", "true");
                         }
+
                         return Task.CompletedTask;
                     }
                 };
@@ -157,7 +133,9 @@ namespace UsersServer
             // api user claim policy
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
+                options.AddPolicy("ApiUser",
+                    policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol,
+                        Constants.Strings.JwtClaims.ApiAccess));
             });
 
             // add identity
@@ -173,11 +151,8 @@ namespace UsersServer
 
             identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole), identityBuilder.Services);
             identityBuilder.AddEntityFrameworkStores<UserDbContext>().AddDefaultTokenProviders();
-
-
         }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void ConfigureApiWithUsers(this IApplicationBuilder app, IWebHostEnvironment env, string origins)
         {
             if (env.IsDevelopment())
             {
@@ -186,7 +161,7 @@ namespace UsersServer
             else
             {
                 app.UseHsts();
-            }         
+            }
 
             // Cors documentation
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
@@ -194,20 +169,16 @@ namespace UsersServer
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger()
                 // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
-                .UseSwaggerUI(config =>
-                {
-                    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API");
-                })
+                .UseSwaggerUI(config => { config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API"); })
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseCors(AllowSpecificOrigins)
+                .UseCors(origins)
                 .UseEndpoints(endpoints =>
                 {
                     // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
                     endpoints.MapControllers();
                 });
-
         }
     }
 }

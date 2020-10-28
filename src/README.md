@@ -1,4 +1,4 @@
-# Commands and Snippets
+# Commands and Snippets with Auth 
 
 ## Description:
 
