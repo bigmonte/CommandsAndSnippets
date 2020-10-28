@@ -12,6 +12,5 @@ namespace UsersServer.Identities.Contracts
         
         Task<bool> LoginAsync(string email, string password);
         
-        Task<AuthenticationDto> RefreshTokenAsync(string token, string refreshToken);
     }
 }

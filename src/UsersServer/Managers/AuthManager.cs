@@ -67,11 +67,7 @@ namespace UsersServer.Identities.Managers
             return await _userManager.CreateAsync(userMdl);
         }
         
-        
-        public Task<AuthenticationDto> RefreshTokenAsync(string token, string refreshToken)
-        {
-            throw new System.NotImplementedException();
-        }
+
 
     }
 }

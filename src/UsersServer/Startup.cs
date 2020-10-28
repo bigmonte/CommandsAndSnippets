@@ -129,7 +129,9 @@ namespace UsersServer
             else
             {
                 app.UseHsts();
-            }
+            }         
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // Cors documentation
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
@@ -148,8 +150,7 @@ namespace UsersServer
                     // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
                     endpoints.MapControllers();
                 });
-            app.UseAuthentication();
-            app.UseAuthorization();
+  
         }
     }
 }
