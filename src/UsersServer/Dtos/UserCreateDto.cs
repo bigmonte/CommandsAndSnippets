@@ -1,7 +1,4 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace UsersServer.Dtos.User
+namespace UsersServer.Dtos
 {
     public sealed class UserCreateDto
     {

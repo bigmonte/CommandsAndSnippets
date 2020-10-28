@@ -1,8 +1,7 @@
-
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Cryptography
+namespace UsersServer.Cryptography.Services
 {
     public interface IHasher : IPasswordHasher<User>
     { 

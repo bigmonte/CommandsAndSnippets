@@ -1,8 +1,8 @@
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UsersServer.Models;
 
-namespace UsersServer.Data.Identities
+namespace UsersServer.Data
 {
     public sealed class UserDbContext : IdentityDbContext<User, UserRole, string>
     {

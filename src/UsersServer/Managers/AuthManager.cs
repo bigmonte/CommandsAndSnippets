@@ -1,26 +1,59 @@
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using UsersServer.Dtos.User;
-using UsersServer.Identities.Contracts;
-using UsersServer.Identities.Cryptography;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
+using UsersServer.Contracts;
+using UsersServer.Cryptography;
+using UsersServer.Cryptography.Services;
+using UsersServer.Data;
+using UsersServer.Dtos;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Managers
+namespace UsersServer.Managers
 {
     public class AuthManager : IAuthManager
     {
         private readonly SignInManager _signInManager;
         private readonly UserManager _userManager;
+        private readonly UsersRepo _usersRepo;
         private readonly IHasher _hasher;
         private readonly IMapper _mapper;
+        private readonly IJwtFactory _jwtFactory;
         
-        public AuthManager(SignInManager signInManager, UserManager userManager, IHasher hasher, IMapper mapper)
+        public AuthManager(SignInManager signInManager, UserManager userManager, IHasher hasher, IMapper mapper
+        , UsersRepo usersRepo, IJwtFactory jwtFactory)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _hasher = hasher;
             _mapper = mapper;
+            _usersRepo = usersRepo;
+            _jwtFactory = jwtFactory;
+        }
+        
+        public async Task<AccessToken> GetToken(UserLoginDto message)
+        {
+            if (!string.IsNullOrEmpty(message.Email) && !string.IsNullOrEmpty(message.Password))
+            {
+                // ensure we have a user with the given user name
+                var user = await _userManager.FindByEmailAsync(message.Email);
+                if (user != null)
+                {
+                    // validate password
+                    if (await LoginAsync(message.Email,message.Password))
+                    {
+                        // Todo generate refresh token
+                        // Todo Add refresh token
+                        await _usersRepo.UpdateAsync(user, CancellationToken.None);
+                        var token = await _jwtFactory.GenerateEncodedToken(user.Id, user.UserName);
+                        await _userManager.SetAuthenticationTokenAsync(user, "ApiUser", "ApiUser", token.Token);
+
+                        return token;
+                    }
+                }
+            }
+
+            return null;
         }
         
         public async Task<bool> LoginAsync(string email, string password)

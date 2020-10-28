@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UsersServer.Data.Identities;
-using UsersServer.Dtos.User;
-using UsersServer.Identities.Contracts;
-using UsersServer.Identities.Cryptography;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using UsersServer.Contracts;
+using UsersServer.Cryptography.Services;
+using UsersServer.Data;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Managers
+namespace UsersServer.Managers
 {
     public class UserManager : UserManager<User>
     {
@@ -26,12 +25,6 @@ namespace UsersServer.Identities.Managers
             _hasher = passwordHasher;
             _usersRepo = store;
         }
-
-        public override Task<IdentityResult> UpdateSecurityStampAsync(User user)
-        {
-            return base.UpdateSecurityStampAsync(user);
-        }
-
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {

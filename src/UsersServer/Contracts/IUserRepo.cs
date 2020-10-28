@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Contracts
+namespace UsersServer.Contracts
 {
     /// <summary>
     /// This is our Users repository.

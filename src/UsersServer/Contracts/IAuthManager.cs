@@ -1,16 +1,16 @@
 using System.Threading.Tasks;
-using UsersServer.Dtos.User;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
+using UsersServer.Dtos;
 
-namespace UsersServer.Identities.Contracts
+namespace UsersServer.Contracts
 {
-    // TODO: Only allow login in the admin frontend 
     public interface IAuthManager
     {
         Task<IdentityResult> CreateUserAsync(UserSignupDto userSignupDto);
         
         Task<bool> LoginAsync(string email, string password);
-        
+
+        Task<AccessToken> GetToken(UserLoginDto message);
+
     }
 }

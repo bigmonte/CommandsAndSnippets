@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace UsersServer.Identities.Cryptography
+namespace UsersServer.Cryptography
 {
     public abstract class BaseCryptoItem
     {

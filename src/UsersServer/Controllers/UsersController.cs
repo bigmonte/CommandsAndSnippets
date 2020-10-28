@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using UsersServer.Dtos.User;
-using UsersServer.Identities.Contracts;
-using UsersServer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UsersServer.Contracts;
+using UsersServer.Dtos;
+using UsersServer.Models;
 
-// TODO Move to different project
 
-namespace UsersServer.Identities.Controllers
+namespace UsersServer.Controllers
 {
-    // TODO: Only Admin role users would be able to access this 
 
+    [Authorize(Policy = "ApiUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -29,17 +29,33 @@ namespace UsersServer.Identities.Controllers
             _authManager = authManager;
         }
 
+        [AllowAnonymous]
         [HttpPost("/register")]
         public async Task<ActionResult<IdentityResult>> SignupUserAsync(UserSignupDto userSignupDto)
         {
             return await _authManager.CreateUserAsync(userSignupDto);
         }
+        [AllowAnonymous]
         
         [HttpPost("/login")]
         public async Task<ActionResult<IdentityResult>> LoginUserAsync(UserLoginDto loginDto)
         {
             var loginResultSucceded =  await _authManager.LoginAsync(loginDto.Email, loginDto.Password);
             if (loginResultSucceded) return Accepted();
+            return Problem();
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("/token")]
+        public async Task<ActionResult<IdentityResult>> GetTokenAsync(UserLoginDto loginDto)
+        {
+            var loginResultSucceded =  await _authManager.GetToken(loginDto);
+
+            if (loginResultSucceded != null)
+            {
+                return Ok(_mapper.Map<AccessToken>(loginResultSucceded));
+
+            }
             return Problem();
         }
         
@@ -87,6 +103,8 @@ namespace UsersServer.Identities.Controllers
             }
   
         }
+        
+        // TODO Separate and rename to AuthController
         
         [HttpGet]   
         public async Task<ActionResult<IEnumerable<UserReadDto>>> GetUsers()

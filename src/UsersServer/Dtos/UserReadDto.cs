@@ -1,4 +1,4 @@
-namespace UsersServer.Dtos.User
+namespace UsersServer.Dtos
 {
     public sealed class UserReadDto
     {

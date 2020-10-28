@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UsersServer.Identities.Contracts;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UsersServer.Contracts;
+using UsersServer.Models;
 
-namespace UsersServer.Data.Identities
+namespace UsersServer.Data
 {
     public class UsersRepo : UserStore<User>, IUserRepo
     {

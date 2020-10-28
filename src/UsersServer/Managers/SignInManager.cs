@@ -1,16 +1,15 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using UsersServer.Dtos.User;
-using UsersServer.Identities.Cryptography;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using UsersServer.Cryptography.Services;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Managers
+namespace UsersServer.Managers
 {
     public class SignInManager : SignInManager<User>
     {

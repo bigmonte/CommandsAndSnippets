@@ -1,8 +1,10 @@
 using System;
-using UsersServer.Models;
 using Microsoft.AspNetCore.Identity;
+using UsersServer.Cryptography.Hashing;
+using UsersServer.Cryptography.Services;
+using UsersServer.Models;
 
-namespace UsersServer.Identities.Cryptography
+namespace UsersServer.Cryptography
 {
     public class Hasher : BaseCryptoItem, IHasher
     {

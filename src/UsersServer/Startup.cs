@@ -9,16 +9,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
-using UsersServer.Data.Identities;
-using UsersServer.Identities.Contracts;
-using UsersServer.Identities.Cryptography;
-using UsersServer.Identities.Managers;
 using UsersServer.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using UsersServer.Contracts;
+using UsersServer.Cryptography;
+using UsersServer.Cryptography.Services;
+using UsersServer.Data;
+using UsersServer.Managers;
 
 namespace UsersServer
 {
@@ -33,23 +35,6 @@ namespace UsersServer
 
         private const string AllowSpecificOrigins = "_allowSpecificOrigins";
 
-        // Initialize some test roles. In the real world, these would be setup explicitly by a role manager
-        private string[] roles = new[] { "User", "Manager", "Administrator" };
-        
-        // https://devblogs.microsoft.com/aspnet/bearer-token-authentication-in-asp-net-core/
-        private async Task InitializeRoles(RoleManager<IdentityRole> roleManager)
-        {
-            foreach (var role in roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    var newRole = new IdentityRole(role);
-                    await roleManager.CreateAsync(newRole);
-                    // In the real world, there might be claims associated with roles
-                    // _roleManager.AddClaimAsync(newRole, new )
-                }
-            }
-        }
         public void ConfigureServices(IServiceCollection services)
         {
             var builder = new SqlConnectionStringBuilder
@@ -67,11 +52,14 @@ namespace UsersServer
                         b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
                 })
                 .AddControllers();
+            services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
+            services.AddScoped<IJwtFactory, JwtFactory>();
 
             // User management 
             services
                 .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<UserDbContext>()
+                
                 .AddUserManager<UserManager>()
                 .AddUserStore<UsersRepo>()
                 .AddSignInManager<SignInManager>();
@@ -106,20 +94,89 @@ namespace UsersServer
                 .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<IAuthManager, AuthManager>()
                 .AddScoped<IHasher, Hasher>();
+            
+            
+            // Register the ConfigurationBuilder instance of AuthSettings
+            var authSettings = _configuration.GetSection(nameof(AuthSettings));
+            services.Configure<AuthSettings>(authSettings);
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(authSettings[nameof(AuthSettings.SecretKey)]));
+
+            // jwt wire up
+            // Get options from app settings
+            var jwtAppSettingOptions = _configuration.GetSection(nameof(JwtIssuerOptions));
+
+            // Configure JwtIssuerOptions
+            services.Configure<JwtIssuerOptions>(options =>
+            {
+                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+                options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
+
+                ValidateAudience = true,
+                ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(configureOptions =>
+            {
+                configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                configureOptions.TokenValidationParameters = tokenValidationParameters;
+                configureOptions.SaveToken = true;
+
+                configureOptions.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            // api user claim policy
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
+            });
+
+            // add identity
+            var identityBuilder = services.AddIdentityCore<User>(o =>
+            {
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 6;
+            });
+
+            identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole), identityBuilder.Services);
+            identityBuilder.AddEntityFrameworkStores<UserDbContext>().AddDefaultTokenProviders();
+
 
         }
 
-        // This method gets called by the runtime.
-        // Use this method to configure the HTTP request pipeline.
-        /// <summary>
-        /// Our implementation of this method does the following -
-        /// Does use Developer Exception page if needed or uses HSTS header in production;
-        /// Setting our app to use Swagger (documentation)
-        /// Use Routing and Endpoints in which our controllers will get automatically configured;
-        /// Configure our app to use allow CORS from the AllowSpecificOrigins;
-        /// </summary>
-        /// <param name="app">Mechanism to configure application request pipeline</param>
-        /// <param name="env">Information about web hosting environment</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -130,8 +187,6 @@ namespace UsersServer
             {
                 app.UseHsts();
             }         
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             // Cors documentation
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
@@ -144,13 +199,15 @@ namespace UsersServer
                     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API");
                 })
                 .UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
                 .UseCors(AllowSpecificOrigins)
                 .UseEndpoints(endpoints =>
                 {
                     // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
                     endpoints.MapControllers();
                 });
-  
+
         }
     }
 }
