@@ -46,7 +46,7 @@ namespace UsersServer.Managers
                         // Todo Add refresh token
                         await _usersRepo.UpdateAsync(user, CancellationToken.None);
                         var token = await _jwtFactory.GenerateEncodedToken(user.Id, user.UserName);
-                        await _userManager.SetAuthenticationTokenAsync(user, "ApiUser", "ApiUser", token.Token);
+                        await _userManager.SetAuthenticationTokenAsync(user, "Income", "ApiUser", token.Token);
 
                         return token;
                     }
