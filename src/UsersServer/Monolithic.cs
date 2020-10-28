@@ -110,7 +110,8 @@ namespace UsersServer
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(configureOptions =>
+            })
+                .AddJwtBearer(configureOptions =>
             {
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
@@ -163,12 +164,7 @@ namespace UsersServer
                 app.UseHsts();
             }
 
-            // Cors documentation
-            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger()
-                // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
                 .UseSwaggerUI(config => { config.SwaggerEndpoint("/swagger/v1/swagger.json", "Commands And Snippets API"); })
                 .UseRouting()
                 .UseAuthentication()
