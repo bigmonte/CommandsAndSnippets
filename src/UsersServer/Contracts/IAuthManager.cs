@@ -8,9 +8,9 @@ namespace UsersServer.Contracts
     {
         Task<IdentityResult> CreateUserAsync(UserSignupDto userSignupDto);
         
-        Task<bool> LoginAsync(string email, string password);
+        Task<bool> VerifyLoginAsync(string email, string password);
 
-        Task<AccessToken> GetToken(UserLoginDto message);
+        Task<AccessToken> GetToken(UserLoginDto loginDto);
 
     }
 }

@@ -13,17 +13,15 @@ namespace UsersServer.Managers
 {
     public class AuthManager : IAuthManager
     {
-        private readonly SignInManager _signInManager;
         private readonly UserManager _userManager;
         private readonly UsersRepo _usersRepo;
         private readonly IHasher _hasher;
         private readonly IMapper _mapper;
         private readonly IJwtFactory _jwtFactory;
         
-        public AuthManager(SignInManager signInManager, UserManager userManager, IHasher hasher, IMapper mapper
+        public AuthManager(UserManager userManager, IHasher hasher, IMapper mapper
         , UsersRepo usersRepo, IJwtFactory jwtFactory)
         {
-            _signInManager = signInManager;
             _userManager = userManager;
             _hasher = hasher;
             _mapper = mapper;
@@ -31,22 +29,20 @@ namespace UsersServer.Managers
             _jwtFactory = jwtFactory;
         }
         
-        public async Task<AccessToken> GetToken(UserLoginDto message)
+        public async Task<AccessToken> GetToken(UserLoginDto loginDto)
         {
-            if (!string.IsNullOrEmpty(message.Email) && !string.IsNullOrEmpty(message.Password))
+            if (!string.IsNullOrEmpty(loginDto.Email) && !string.IsNullOrEmpty(loginDto.Password))
             {
-                // ensure we have a user with the given user name
-                var user = await _userManager.FindByEmailAsync(message.Email);
+                var user = await _userManager.FindByEmailAsync(loginDto.Email);
                 if (user != null)
                 {
-                    // validate password
-                    if (await LoginAsync(message.Email,message.Password))
+                    if (await VerifyLoginAsync(loginDto.Email,loginDto.Password))
                     {
                         // Todo generate refresh token
                         // Todo Add refresh token
                         await _usersRepo.UpdateAsync(user, CancellationToken.None);
                         var token = await _jwtFactory.GenerateEncodedToken(user.Id, user.UserName);
-                        await _userManager.SetAuthenticationTokenAsync(user, "Income", "ApiUser", token.Token);
+                       // await _userManager.SetAuthenticationTokenAsync(user, "Income", "ApiUser", token.Token);
 
                         return token;
                     }
@@ -56,7 +52,7 @@ namespace UsersServer.Managers
             return null;
         }
         
-        public async Task<bool> LoginAsync(string email, string password)
+        public async Task<bool> VerifyLoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
