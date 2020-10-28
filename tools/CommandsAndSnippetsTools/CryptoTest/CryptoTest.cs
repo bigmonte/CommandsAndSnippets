@@ -1,5 +1,4 @@
-
-using IdentitiesServer.Identities.Cryptography;
+using UsersServer.Identities.Cryptography;
 
 namespace IdentitiesServerTools
 {
