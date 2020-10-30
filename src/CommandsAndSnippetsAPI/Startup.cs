@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using CommandsAndSnippetsAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -9,23 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
-using CommandsAndSnippetsAPI.Data.Identities;
-using CommandsAndSnippetsAPI.Identities.Contracts;
-using CommandsAndSnippetsAPI.Identities.Cryptography;
-using CommandsAndSnippetsAPI.Identities.Managers;
-using CommandsAndSnippetsAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace CommandsAndSnippetsAPI
 {
     public class Startup
     {
-        /// <summary>
-        /// This allows us to access our secrets hosted in the System.
-        /// </summary>
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration config) => _configuration = config;
@@ -41,6 +30,7 @@ namespace CommandsAndSnippetsAPI
                 Password = _configuration["Password"]
             };
 
+            // Policies
             services
                 .AddCors(options =>
                 {
@@ -48,18 +38,15 @@ namespace CommandsAndSnippetsAPI
                         b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
                 })
                 .AddControllers();
+            
 
+            // Database Context and Swagger
             services
-                .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
-                .AddEntityFrameworkStores<IdentitiesContext>()
-                .AddUserManager<UserManager>()
-                .AddUserStore<UsersRepo>()
-                .AddSignInManager<SignInManager>()
-                .AddDefaultTokenProviders();
-
-            services
-                .AddDbContext<ApiDataContext>(options => { options.UseSqlServer(builder.ConnectionString); })
-                .AddDbContext<IdentitiesContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                .AddDbContext<ApiDataContext>(options =>
+                {
+                    options.UseSqlServer(builder.ConnectionString)
+                        .LogTo(Console.WriteLine, LogLevel.Information);
+                })
                 // Inject an implementation of ISwaggerProvider with defaulted settings applied
                 .AddSwaggerGen()
                 .ConfigureSwaggerGen(options =>
@@ -72,53 +59,23 @@ namespace CommandsAndSnippetsAPI
                         Description = "Useful commands and Snippets API"
                     });
 
-                    var secScheme = new OpenApiSecurityScheme();
+                    /*var secScheme = new OpenApiSecurityScheme();
                     secScheme.Description = "JWT Authorization header";
                     options.AddSecurityDefinition("Bearer", secScheme);
 
                     var secRequirement = new OpenApiSecurityRequirement();
                     secRequirement.Add(secScheme, new[] {"Bearer"});
-                    options.AddSecurityRequirement(secRequirement);
+                    options.AddSecurityRequirement(secRequirement);*/
                 });
 
-
+            // Registering 'services' and Authentication, Cookies, JWT
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-                .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager
-                .AddScoped<IUserRepo, UsersRepo>()
                 .AddScoped<ICommandsApiRepo, ApiRepo>()
-                .AddScoped<ISnippetsAPIRepo, ApiRepo>()
-                .AddScoped<IAuthManager, AuthManager>()
-                .AddScoped<IHasher, Hasher>()
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddCookie()
-                .AddJwtBearer(jwtBearerOptions =>
-                {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateActor = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "Test Issuer",
-                        ValidAudience = "Test Audience",
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("32CHARSECRETKEYTODOMOVETOSECRETS"))
-                    };
-                });
+                .AddScoped<ISnippetsAPIRepo, ApiRepo>();
+
         }
 
-        // This method gets called by the runtime.
-        // Use this method to configure the HTTP request pipeline.
-        /// <summary>
-        /// Our implementation of this method does the following -
-        /// Does use Developer Exception page if needed or uses HSTS header in production;
-        /// Setting our app to use Swagger (documentation)
-        /// Use Routing and Endpoints in which our controllers will get automatically configured;
-        /// Configure our app to use allow CORS from the AllowSpecificOrigins;
-        /// </summary>
-        /// <param name="app">Mechanism to configure application request pipeline</param>
-        /// <param name="env">Information about web hosting environment</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

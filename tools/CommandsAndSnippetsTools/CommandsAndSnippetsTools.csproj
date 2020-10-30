@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CommandsAndSnippetsAPI\CommandsAndSnippetsAPI.csproj" />
+    <ProjectReference Include="..\..\src\IdentitiesServer\IdentitiesServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

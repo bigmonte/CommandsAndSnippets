@@ -31,7 +31,6 @@ namespace CommandsAndSnippetsTools
             Console.WriteLine("reflection                       |   Print Reflection Tests");
             Console.WriteLine("json                             |   Print Json Tests");
             Console.WriteLine("game                             |   Run learning game");
-            Console.WriteLine("crypto                           |   Run Crypto tests");
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("Please provide an valid argument!");
         }
@@ -47,8 +46,6 @@ namespace CommandsAndSnippetsTools
                 {RegisteredArgs.Reflection, "reflection"},
                 {RegisteredArgs.Json, "json"},
                 {RegisteredArgs.Game, "game"},
-                {RegisteredArgs.Crypto, "crypto"},
-                
             };
 
             var hasRegisteredArg = HasValidArgument(args, registeredArgs);
@@ -104,16 +101,6 @@ namespace CommandsAndSnippetsTools
                 var other = new LearningGame();
                 other.RunLearningGame();
             }
-            if (args[0] == registeredArgs[RegisteredArgs.Crypto])
-            {
-                var hash = new CryptoTest();
-                hash.EncryptPass();
-                
-            }
-            
-            
-            
- 
         }
 
         private static void GenerateXmlDump(string path = "")

@@ -28,76 +28,45 @@ namespace CommandsAndSnippetsAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> GetCommands()
         {
-            try
-            {
-                var commandItems = await _commandsRepo.GetCommands();
-                return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var commandItems = await _commandsRepo.GetCommands();
+            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
         }
 
         [HttpGet("{id}", Name = "GetCommandById")]
         public async Task<ActionResult<CommandReadDto>> GetCommandByIdAsync(int id)
         {
-            try
+            var commandItem = await _commandsRepo.GetCommandByIdAsync(id);
+            if (commandItem == null)
             {
-                var commandItem = await _commandsRepo.GetCommandByIdAsync(id);
-                if (commandItem == null)
-                {
-                    return NotFound();
-                }
+                return NotFound();
+            }
 
-                return Ok(_mapper.Map<CommandReadDto>(commandItem));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return Ok(_mapper.Map<CommandReadDto>(commandItem));
         }
 
         public ActionResult<CommandReadDto> GetCommandById(int id)
         {
-            try
+            var commandItem = _commandsRepo.GetCommandById(id);
+            if (commandItem == null)
             {
-                var commandItem = _commandsRepo.GetCommandById(id);
-                if (commandItem == null)
-                {
-                    return NotFound();
-                }
+                return NotFound();
+            }
 
-                return Ok(_mapper.Map<CommandReadDto>(commandItem));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return Ok(_mapper.Map<CommandReadDto>(commandItem));
         }
 
 
         [HttpPost]
         public async Task<ActionResult<CommandReadDto>> CreateCommand(CommandCreateDto commandToCreate)
         {
-            try
-            {
-                var cmdModel = _mapper.Map<Command>(commandToCreate);
-                _commandsRepo.CreateCommand(cmdModel);
-                await _commandsRepo.SaveCommandsChanges();
+            var cmdModel = _mapper.Map<Command>(commandToCreate);
+            _commandsRepo.CreateCommand(cmdModel);
+            await _commandsRepo.SaveCommandsChanges();
 
-                var cmdReadDto = _mapper.Map<CommandReadDto>(cmdModel);
+            var cmdReadDto = _mapper.Map<CommandReadDto>(cmdModel);
 
-                return CreatedAtRoute(nameof(GetCommandById), new {Id = cmdReadDto.Id}, cmdReadDto);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return CreatedAtRoute(nameof(GetCommandById), new {Id = cmdReadDto.Id}, cmdReadDto);
+
 
             /*  CreatedAtRoute method will:
              *      - Return 201: Created 201 status code
@@ -114,29 +83,21 @@ namespace CommandsAndSnippetsAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCommand(int id, CommandUpdateDto commandToUpdate)
         {
-            try
+            var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
+
+            if (cmdModelFromRepo == null)
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
-
-                if (cmdModelFromRepo == null)
-                {
-                    return NotFound();
-                }
-
-                _mapper.Map(commandToUpdate, cmdModelFromRepo);
-
-                //_apiRepo.UpdateCommand(cmdModelFromRepo);
-
-                await _commandsRepo.SaveCommandsChanges();
-
-                // Return updated Resource
-                return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
+                return NotFound();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+
+            _mapper.Map(commandToUpdate, cmdModelFromRepo);
+
+            //_apiRepo.UpdateCommand(cmdModelFromRepo);
+
+            await _commandsRepo.SaveCommandsChanges();
+
+            // Return updated Resource
+            return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
         }
 
         [HttpPatch("{id}")]
@@ -144,35 +105,27 @@ namespace CommandsAndSnippetsAPI.Controllers
             int id,
             JsonPatchDocument<CommandUpdateDto> patchDoc)
         {
-            try
+            var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
+            if (cmdModelFromRepo == null)
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
-                if (cmdModelFromRepo == null)
-                {
-                    return NotFound();
-                }
-
-                var cmdToPatch = _mapper.Map<CommandUpdateDto>(cmdModelFromRepo);
-                patchDoc.ApplyTo(cmdToPatch, ModelState);
-
-                if (!TryValidateModel(cmdToPatch))
-                {
-                    return ValidationProblem(ModelState);
-                }
-
-                _mapper.Map(cmdToPatch, cmdModelFromRepo);
-
-                _commandsRepo.UpdateCommand(cmdModelFromRepo);
-
-                await _commandsRepo.SaveCommandsChanges();
-
-                return NoContent();
+                return NotFound();
             }
-            catch (Exception e)
+
+            var cmdToPatch = _mapper.Map<CommandUpdateDto>(cmdModelFromRepo);
+            patchDoc.ApplyTo(cmdToPatch, ModelState);
+
+            if (!TryValidateModel(cmdToPatch))
             {
-                Console.WriteLine(e);
-                throw;
+                return ValidationProblem(ModelState);
             }
+
+            _mapper.Map(cmdToPatch, cmdModelFromRepo);
+
+            _commandsRepo.UpdateCommand(cmdModelFromRepo);
+
+            await _commandsRepo.SaveCommandsChanges();
+
+            return NoContent();
 
 
             /*            Example patch operation
@@ -189,27 +142,19 @@ namespace CommandsAndSnippetsAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCommand(int id)
         {
-            try
+            var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
+            if (cmdModelFromRepo == null)
             {
-                var cmdModelFromRepo = await _commandsRepo.GetCommandByIdAsync(id);
-                if (cmdModelFromRepo == null)
-                {
-                    return NotFound();
-                }
-
-                _commandsRepo.DeleteCommand(cmdModelFromRepo);
-                await _commandsRepo.SaveCommandsChanges();
-
-                // return NoContent();
-
-                // OR return the deleted command to our frontend
-                return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
+                return NotFound();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+
+            _commandsRepo.DeleteCommand(cmdModelFromRepo);
+            await _commandsRepo.SaveCommandsChanges();
+
+            // return NoContent();
+
+            // OR return the deleted command to our frontend
+            return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
         }
     }
 }
