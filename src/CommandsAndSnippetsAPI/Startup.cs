@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace CommandsAndSnippetsAPI
 {
@@ -35,9 +36,17 @@ namespace CommandsAndSnippetsAPI
                 .AddCors(options =>
                 {
                     options.AddPolicy(AllowSpecificOrigins,
-                        b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:4200", "http://127.0.0.1:4200"); });
+                        b =>
+                        {
+                            b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:4200",
+                                "http://127.0.0.1:4200");
+                        });
                 })
-                .AddControllers();
+                .AddControllers()
+                .AddNewtonsoftJson(s =>
+                {
+                    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
             
 
             // Database Context and Swagger
