@@ -99,7 +99,7 @@ namespace CommandsAndSnippetsAPI.Controllers
             // Return updated Resource
             return Ok(_mapper.Map<CommandReadDto>(cmdModelFromRepo));
         }
-
+        
         [HttpPatch("{id}")]
         public async Task<ActionResult> PartialCommandUpdate(
             int id,
