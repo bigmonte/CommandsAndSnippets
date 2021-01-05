@@ -1,30 +1,37 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UsersServer.Contracts;
 using UsersServer.Dtos;
+using UsersServer.Models;
 
 namespace UsersServer.Controllers
 {
     [Route("api/[controller]")]
-
-    [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]     [ApiController]
     public class AuthController : Controller
     {
         private readonly IMapper _mapper;
         private readonly IAuthManager _authManager;
+        private readonly UserManager<User> _userManager;
 
-        public AuthController( IMapper mapper, IAuthManager authManager)
+        public AuthController( IMapper mapper, IAuthManager authManager, UserManager<User> userManager)
         {
             _mapper = mapper;
             _authManager = authManager;
+            _userManager = userManager;
         }
 
         
         [AllowAnonymous]
-        [HttpPost("/api/register")]
+        [HttpPost("register")]
         public async Task<ActionResult<IdentityResult>> SignupUserAsync(UserSignupDto userSignupDto)
         {
             return await _authManager.CreateUserAsync(userSignupDto);
@@ -32,7 +39,7 @@ namespace UsersServer.Controllers
 
         
         [AllowAnonymous]
-        [HttpPost("api/login")]
+        [HttpPost("login")]
         public async Task<ActionResult<IdentityResult>> GetTokenAsync(UserLoginDto loginDto)
         {
             var loginResultSucceded =  await _authManager.GetToken(loginDto);
@@ -44,5 +51,35 @@ namespace UsersServer.Controllers
             }
             return Problem();
         }
+        
+            
+        [AllowAnonymous]
+        [HttpPost("login2")]
+        public async Task<ActionResult<IdentityResult>> DoLoginAsync(UserLoginDto loginDto)
+        {
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
+
+            if (user != null)
+            {
+                if(await _authManager.VerifyLoginAsync(user.Email, loginDto.Password))
+                {
+                    var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                    return Json(true);
+                }
+            }
+
+            return Json(false);
+        }
+
+        [HttpGet("test")]
+        public ActionResult TestRequest()
+        {
+            return Ok(new {Message = "Test"});
+        }
+      
+        
     }
 }

@@ -5,11 +5,13 @@ using CommandsAndSnippetsAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using CommandsAndSnippetsAPI.Dtos;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace CommandsAndSnippetsAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [Authorize(Policy = "ApiUser")]
     [Route("api/[controller]")]
     [ApiController]
@@ -26,12 +28,14 @@ namespace CommandsAndSnippetsAPI.Controllers
             _mapper = mapper;
         }
 
+    [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CommandReadDto>>> GetCommands()
         {
             var commandItems = await _commandsRepo.GetCommands();
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
         }
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 
         [HttpGet("{id}", Name = "GetCommandById")]
         public async Task<ActionResult<CommandReadDto>> GetCommandByIdAsync(int id)
@@ -56,6 +60,7 @@ namespace CommandsAndSnippetsAPI.Controllers
             return Ok(_mapper.Map<CommandReadDto>(commandItem));
         }
 
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)] 
 
         [HttpPost]
         public async Task<ActionResult<CommandReadDto>> CreateCommand(CommandCreateDto commandToCreate)

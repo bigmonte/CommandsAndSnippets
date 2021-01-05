@@ -8,6 +8,8 @@ namespace CommandsAndSnippetsAPI.Data
         public ApiDataContext(DbContextOptions<ApiDataContext> options) : base(options)
         {
             Database.EnsureCreated();
+            SaveChanges();
+
         }
 
         public DbSet<Command> CommandItems { get; set; }

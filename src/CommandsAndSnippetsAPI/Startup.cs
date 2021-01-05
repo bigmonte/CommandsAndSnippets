@@ -28,13 +28,17 @@ namespace CommandsAndSnippetsAPI
                 UserID = _configuration["UserID"],
                 Password = _configuration["Password"]
             };
+                       
+            // horrible approach TODO use autofac and eventually with presenters 
+            services.AddAuthServerServices(builder, AllowSpecificOrigins, _configuration);
 
             // Policies
             services
                 .AddCors(options =>
                 {
                     options.AddPolicy(AllowSpecificOrigins,
-                        b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080"); });
+                        b => { b.WithOrigins("http://localhost:8080", "http://127.0.0.1:8080").AllowAnyHeader()
+                            .AllowAnyMethod(); });
                 })
                 .AddControllers();
 
@@ -50,9 +54,7 @@ namespace CommandsAndSnippetsAPI
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ICommandsApiRepo, ApiRepo>()
                 .AddScoped<ISnippetsAPIRepo, ApiRepo>();
-            
-            // horrible approach TODO use autofac and eventually with presenters 
-            services.AddAuthServerServices(builder, AllowSpecificOrigins, _configuration);
+ 
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

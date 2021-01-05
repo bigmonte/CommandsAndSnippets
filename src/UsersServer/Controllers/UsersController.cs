@@ -1,7 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UsersServer.Contracts;
@@ -11,7 +12,8 @@ using UsersServer.Models;
 
 namespace UsersServer.Controllers
 {
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)] 
     [Authorize(Policy = "ApiUser")]
     [Route("api/[controller]")]
     [ApiController]
@@ -36,7 +38,6 @@ namespace UsersServer.Controllers
             var readDto = _mapper.Map<UserReadDto>(userModel);
 
             return CreatedAtRoute(nameof(GetUserById), new {Id = readDto.Id}, readDto);
-
         }
         
         
@@ -50,7 +51,6 @@ namespace UsersServer.Controllers
             }
 
             return Ok(_mapper.Map<UserReadDto>(userItem));
-  
         }
         
         
@@ -59,10 +59,6 @@ namespace UsersServer.Controllers
         {
             var users = await _repo.GetUsers();
             return Ok(_mapper.Map<IEnumerable<UserReadDto>>(users));
-
         }
-     
-
-        
     }
 }
