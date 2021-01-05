@@ -1,0 +1,12 @@
+<ul class="list-group mb-3">
+  <li 
+    *ngFor="let command of commands" 
+    (click)="handleCommandClick(command)"
+    class="list-group-item d-flex justify-content-between lh-condensed">
+    <div>
+      <h6 class="my-0">{{command.commandLine}}</h6>
+      <small class="text-muted">{{command.description}}</small>
+    </div>
+    <span class="text-muted">{{command.platform}}</span>
+  </li>
+</ul>

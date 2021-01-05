@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="cold-md-4 order-md-2 mb-4">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Your commands</span>
+      <span class="badge badge-secondary badge-pill">{{commands.length}}</span>
+    </h4>
+    <app-command-search
+      (onSearch)="onSearchText($event)"></app-command-search>
+    <app-command-list [commands]="commands" (onCommandClicked)="handleCommandSelect($event)"></app-command-list>
+  </div>
+  <div class="col-md-8 order-md-1 ml-5">
+    <div *ngIf="commandsEmpty(); else okList">No commands present</div>
+    <ng-template #okList>
+      <h4 class="mb-3">{{isDetailView ? 'Details' : 'Editing command'}}<button class="btn-sm btn-primary ml-2" (click)="toggleView()"
+        [ngClass]="btnViewClass">{{isDetailView ? 'Edit command' : 'Command details'}}</button><button (click)="deleteCommand()" class="btn btn-sm btn-danger ml-2">Delete</button>
+      </h4>
+        <app-command-detail-card *ngIf="isDetailView; else updateView" [command]="selectedCommand"></app-command-detail-card>
+        <ng-template #updateView>
+          <app-command-form 
+            [disableSubmit]="disableUpdateFormSubmit"
+            [onSubmit]="updateCommand"
+            [command]="selectedCommand"
+            [alert]="alert"
+            [onFormInputChanged]="onUpdateFormChangedCb">
+          </app-command-form>
+        </ng-template>
+    </ng-template>
+
+  </div>
+</div>

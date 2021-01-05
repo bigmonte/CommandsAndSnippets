@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-header">
+    {{command?.howTo}}
+  </div>
+  <div class="card-body">
+    <blockquote class="blockquote mb-0">
+      <p>{{command?.commandLine}}</p>
+      <footer class="text-muted mb-2">{{command?.platform}}</footer>
+    </blockquote>
+    <a 
+      routerLink="/commands/{{command?.id}}"
+      class="btn-sm btn-outline-primary">Details</a>
+  </div>
+</div>

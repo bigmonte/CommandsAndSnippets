@@ -1,0 +1,43 @@
+<form
+  (submit)="submitForm()">
+  <div class="mb-3">
+  <div *ngIf="alert.success" div class="alert alert-success">{{alert?.success}}</div>
+  <div *ngIf="alert.error" div class="alert alert-danger">{{alert?.error}}</div>
+    <label htmlFor="CommandLine">How To</label>
+    <input 
+      [(ngModel)]="selectedCommand.howTo"
+      (input)="onFormInputChanged(selectedCommand)"
+      name="howTo"
+      type="text" 
+      class="form-control"
+      id="howTo" 
+      placeholder="How To"/>
+  </div>
+  <div class="mb-3">
+    <label htmlFor="platform">Platform</label>
+    <input 
+      [(ngModel)]="selectedCommand.platform"
+      (input)="onFormInputChanged(selectedCommand)"
+      name="platform"
+      type="text" 
+      class="form-control" 
+      id="platform" 
+      placeholder="Command platform"/>
+  </div>
+  <div class="mb-3">
+    <label htmlFor="CommandDescription">Command line</label>
+    <input
+      [(ngModel)]="selectedCommand.commandLine" 
+      (input)="onFormInputChanged(selectedCommand)"
+      name="commandLine"
+      type="text" 
+      class="form-control" 
+      id="commandLine" 
+      placeholder="Your command"/>
+  </div>
+  <hr class="mb-4" />
+  <button 
+    class="btn btn-primary btn-lg btn-block" 
+    [disabled]="disableSubmit"
+    type="submit">{{selectedCommand.id? 'Update Command' : 'Create Command'}}</button>
+</form>
