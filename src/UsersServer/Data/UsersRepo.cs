@@ -9,7 +9,7 @@ using UsersServer.Models;
 
 namespace UsersServer.Data
 {
-    public class UsersRepo : UserStore<User>, IUserRepo
+    public class UsersRepo : UserStore<User>, IUsersRepo
     {
         private readonly UserDbContext _context;
 

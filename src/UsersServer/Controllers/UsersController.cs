@@ -19,10 +19,10 @@ namespace UsersServer.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepo _repo;
+        private readonly IUsersRepo _repo;
         private readonly IMapper _mapper;
 
-        public UsersController( IMapper mapper, IUserRepo repo, IAuthManager authManager)
+        public UsersController( IMapper mapper, IUsersRepo repo, IAuthManager authManager)
         {
             _mapper = mapper;
             _repo = repo;

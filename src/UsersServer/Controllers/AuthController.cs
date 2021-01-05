@@ -21,9 +21,9 @@ namespace UsersServer.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IAuthManager _authManager;
-        private readonly UserManager<User> _userManager;
+        private readonly IUserManager _userManager;
 
-        public AuthController( IMapper mapper, IAuthManager authManager, UserManager<User> userManager)
+        public AuthController( IMapper mapper, IAuthManager authManager, IUserManager userManager)
         {
             _mapper = mapper;
             _authManager = authManager;

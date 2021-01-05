@@ -11,11 +11,11 @@ using UsersServer.Models;
 
 namespace UsersServer.Managers
 {
-    public class UserManager : UserManager<User>
+    public class UserManager : UserManager<User>, IUserManager
     {
         private readonly IHasher _hasher;
-        private readonly UsersRepo _usersRepo;
-        public UserManager(UsersRepo store, IOptions<IdentityOptions> optionsAccessor,
+        private readonly IUsersRepo _usersRepo;
+        public UserManager(IUsersRepo store, IOptions<IdentityOptions> optionsAccessor,
             IHasher passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) : base(store,
@@ -91,7 +91,7 @@ namespace UsersServer.Managers
 
             User user;
 
-            if (Store is IUserRepo repo)
+            if (Store is IUsersRepo repo)
             {
                 user = await repo.FindByNameAsync(userName, CancellationToken);
             }
@@ -143,7 +143,7 @@ namespace UsersServer.Managers
         {
             User user = null;
 
-            if (Store is IUserRepo repo)
+            if (Store is IUsersRepo repo)
             {
                 user = await repo.FindByEmailAsync(email, CancellationToken);
             }

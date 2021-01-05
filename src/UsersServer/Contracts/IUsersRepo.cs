@@ -12,7 +12,7 @@ namespace UsersServer.Contracts
     /// Admin and APIClient
     /// </summary>
     
-    public interface IUserRepo : IUserStore<User>
+    public interface IUsersRepo : IUserStore<User>
     {
         public Task<IEnumerable<User>> GetUsers();
         public Task CreateUser(User user);

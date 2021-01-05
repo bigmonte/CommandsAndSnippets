@@ -13,14 +13,14 @@ namespace UsersServer.Managers
 {
     public class AuthManager : IAuthManager
     {
-        private readonly UserManager _userManager;
-        private readonly UsersRepo _usersRepo;
+        private readonly IUserManager _userManager;
+        private readonly IUsersRepo _usersRepo;
         private readonly IHasher _hasher;
         private readonly IMapper _mapper;
         private readonly IJwtFactory _jwtFactory;
         
-        public AuthManager(UserManager userManager, IHasher hasher, IMapper mapper
-        , UsersRepo usersRepo, IJwtFactory jwtFactory)
+        public AuthManager(IUserManager userManager, IHasher hasher, IMapper mapper
+        , IUsersRepo usersRepo, IJwtFactory jwtFactory)
         {
             _userManager = userManager;
             _hasher = hasher;

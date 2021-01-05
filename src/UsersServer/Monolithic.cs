@@ -38,8 +38,7 @@ namespace UsersServer
                 .AddIdentityCore<User>(opt => { opt.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<UserDbContext>()
                 .AddUserManager<UserManager>()
-                .AddUserStore<UsersRepo>()
-                .AddSignInManager<SignInManager>();
+                .AddUserStore<UsersRepo>();
             // Database Context and Swagger
             services
                 .AddDbContext<UserDbContext>(options => { options.UseSqlServer(builder.ConnectionString, b=> b.MigrationsAssembly("CommandsAndSnippetsAPI")); })
@@ -54,21 +53,13 @@ namespace UsersServer
                         Contact = new OpenApiContact {Email = "geral@bigmonte.com"},
                         Description = "Useful commands and Snippets API"
                     });
-
-                    /*var secScheme = new OpenApiSecurityScheme();
-                    secScheme.Description = "JWT Authorization header";
-                    options.AddSecurityDefinition("Bearer", secScheme);
-
-                    var secRequirement = new OpenApiSecurityRequirement();
-                    secRequirement.Add(secScheme, new[] {"Bearer"});
-                    options.AddSecurityRequirement(secRequirement);*/
                 });
             services.TryAddSingleton<ISystemClock, SystemClock>();
             // Registering 'services' and Authentication, Cookies, JWT
             services
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-                .AddScoped<UsersRepo>() // So it gets successfully registered in UserManager
-                .AddScoped<IUserRepo, UsersRepo>()
+                .AddScoped<IUsersRepo, UsersRepo>()
+                .AddScoped<IUserManager, UserManager>() // So it gets successfully registered in UserManager
                 .AddScoped<IAuthManager, AuthManager>()
                 .AddScoped<IHasher, Hasher>();
 
@@ -76,19 +67,21 @@ namespace UsersServer
             // Register the ConfigurationBuilder instance of AuthSettings
             var authSettings = _configuration.GetSection(nameof(AuthSettings));
             services.Configure<AuthSettings>(authSettings);
-
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(authSettings[nameof(AuthSettings.SecretKey)]));
+            var signingKey = new SymmetricSecurityKey
+                (Encoding.ASCII.GetBytes(authSettings[nameof(AuthSettings.SecretKey)]));
 
             // jwt wire up
             // Get options from app settings
-            var jwtAppSettingOptions = _configuration.GetSection(nameof(JwtIssuerOptions));
+            var jwtAppSettingOptions = _configuration
+                .GetSection(nameof(JwtIssuerOptions));
 
             // Configure JwtIssuerOptions
             services.Configure<JwtIssuerOptions>(options =>
             {
                 options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
                 options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
-                options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+                options.SigningCredentials = new SigningCredentials
+                    (signingKey, SecurityAlgorithms.HmacSha256);
             });
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -179,11 +172,7 @@ namespace UsersServer
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors(origins)   
-                .UseEndpoints(endpoints =>
-                {
-                    // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 
-                    endpoints.MapControllers();
-                });
+                .UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
