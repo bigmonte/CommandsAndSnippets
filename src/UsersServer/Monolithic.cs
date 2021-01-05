@@ -42,7 +42,7 @@ namespace UsersServer
                 .AddSignInManager<SignInManager>();
             // Database Context and Swagger
             services
-                .AddDbContext<UserDbContext>(options => { options.UseSqlServer(builder.ConnectionString); })
+                .AddDbContext<UserDbContext>(options => { options.UseSqlServer(builder.ConnectionString, b=> b.MigrationsAssembly("CommandsAndSnippetsAPI")); })
                 // Inject an implementation of ISwaggerProvider with defaulted settings applied
                 .AddSwaggerGen()
                 .ConfigureSwaggerGen(options =>
@@ -178,7 +178,7 @@ namespace UsersServer
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseCors(origins)
+                .UseCors(origins)   
                 .UseEndpoints(endpoints =>
                 {
                     // Controller services, registered in the ConfigureServices method, as endpoints in the Request Pipeline. 

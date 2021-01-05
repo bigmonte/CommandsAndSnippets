@@ -6,12 +6,8 @@ namespace UsersServer.Data
 {
     public sealed class UserDbContext : IdentityDbContext<User, UserRole, string>
     {
-        private static int DebugTimes = 1;
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
-            SaveChanges();
-            
         }
         
         public override DbSet<User> Users { get; set; }

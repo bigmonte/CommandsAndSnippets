@@ -15,7 +15,8 @@ namespace UsersServer.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]     [ApiController]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]     
+    [ApiController]
     public class AuthController : Controller
     {
         private readonly IMapper _mapper;
@@ -62,10 +63,10 @@ namespace UsersServer.Controllers
 
             if (user != null)
             {
-                if(await _authManager.VerifyLoginAsync(user.Email, loginDto.Password))
+                if(await _userManager.CheckPasswordAsync(user, loginDto.Password))
                 {
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                     return Json(true);
                 }
