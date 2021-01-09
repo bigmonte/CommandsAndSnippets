@@ -111,6 +111,7 @@ namespace UsersServer
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/api/auth/login2";
+                    options.LogoutPath = "/api/auth/logout";
                 })
                 .AddJwtBearer(configureOptions =>
                 {

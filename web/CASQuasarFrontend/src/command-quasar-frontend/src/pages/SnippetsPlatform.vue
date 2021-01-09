@@ -22,7 +22,7 @@ export default {
   methods: {
     async handleSearch (text) {
       if (this.canSearch) {
-        this.$store.dispatch('snippets/fetchSearchData')
+        await this.$store.dispatch('snippets/fetchSearchData')
       }
     }
   },

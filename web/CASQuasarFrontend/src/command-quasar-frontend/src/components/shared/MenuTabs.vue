@@ -45,6 +45,14 @@ export default {
       get () {
         return this.onSnippetsRoute || this.onCommandsRoute
       }
+    },
+    loggedIn: {
+      get () {
+        return this.$store.getters['account/loggedIn']
+      },
+      set (val) {
+        this.$store.commit('account/setLoggedIn', val)
+      }
     }
   }
 }
@@ -60,7 +68,7 @@ export default {
       :to="{ name: `${getAddRoute()}` }" class="q-btn flat round dense">
       <q-icon name="add" color="white"></q-icon>
     </router-link>
-    <q-tabs>
+    <q-tabs v-if="loggedIn">
       <q-route-tab
         label="Commands"
         to="/commands"

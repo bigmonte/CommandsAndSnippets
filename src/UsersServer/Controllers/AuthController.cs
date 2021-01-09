@@ -74,6 +74,17 @@ namespace UsersServer.Controllers
 
             return Json(false);
         }
+            
+        [AllowAnonymous]
+        [HttpPost("logout")]
+        public async Task<ActionResult<IdentityResult>> DoLogoutAsync(UserLoginDto loginDto)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+
+            return Json(true);
+        }
+        
 
         [HttpGet("test")]
         public ActionResult TestRequest()

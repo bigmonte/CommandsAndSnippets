@@ -16,7 +16,7 @@ export default {
   methods: {
     async handleSearch (text) {
       if (this.canSearch) {
-        this.$store.dispatch('commands/fetchSearchData')
+        await this.$store.dispatch('commands/fetchSearchData')
       }
     }
   },

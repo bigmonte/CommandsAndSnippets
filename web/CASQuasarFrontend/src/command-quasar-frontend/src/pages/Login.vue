@@ -51,13 +51,29 @@ export default {
         email: this.email,
         password: this.password
       }
-      apiPostCall('auth/login2', ob).then(d => console.log(d))
+      apiPostCall('auth/login2', ob).then(d => {
+        this.loggedIn = d
+        if (this.loggedIn) {
+          this.$router.push('/index')
+          console.log(d)
+        }
+      })
     },
     onSubmit () {
       this.doLogin()
     },
     onReset () {
       console.log('submit')
+    }
+  },
+  computed: {
+    loggedIn: {
+      get () {
+        return this.$store.getters['account/loggedIn']
+      },
+      set (val) {
+        this.$store.commit('account/setLoggedIn', val)
+      }
     }
   }
 }

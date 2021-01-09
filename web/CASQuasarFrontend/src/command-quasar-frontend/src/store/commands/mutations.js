@@ -1,5 +1,5 @@
 // Commands state
-import { Command } from '../../models'
+import { Command } from 'src/models'
 
 export const updateCommands = (state, commandsList) => {
   state.commandsData = []

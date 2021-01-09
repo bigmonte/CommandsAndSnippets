@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import commands from './commands'
 import snippets from './snippets'
+import account from './account'
 import logger from './logger'
 
 // import example from './module-example'
@@ -22,7 +23,8 @@ export default function (/* { ssrContext } */) {
     modules: {
       commands,
       snippets,
-      logger
+      logger,
+      account
     },
 
     // enable strict mode (adds overhead!)
@@ -35,11 +37,13 @@ export default function (/* { ssrContext } */) {
       const newCommands = require('./commands').default
       const newSnippets = require('./snippets').default
       const newLogger = require('./logger').default
+      const newAccount = require('./account').default
       Store.hotUpdate({
         modules: {
           commands: newCommands,
           snippets: newSnippets,
-          logger: newLogger
+          logger: newLogger,
+          account: newAccount
         }
       })
     })
