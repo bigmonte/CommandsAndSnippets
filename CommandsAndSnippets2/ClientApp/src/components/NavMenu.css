@@ -1,0 +1,12 @@
+a.btn.btn-secondary {
+    color: inherit;
+}
+
+img.logo {
+    align-self: start;
+    max-width: 160px;
+}
+
+a.logo-url {
+    width: 160px !important;
+}

@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    container_name: CRecipes_MYSQL
+    image: mysql/mysql-server:8.0
+    environment:
+      MYSQL_ROOT_HOST: '0.0.0.0'
+      MYSQL_USER_HOST: '0.0.0.0'
+      MYSQL_ROOT_PASSWORD: dXjw127124dJ
+      MYSQL_USER: crlocal
+      MYSQL_PASSWORD: xkfYwiDHn182jX
+      MYSQL_DATABASE: crlocal
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+  phpmyadmin:
+    container_name: CRecipes_PHPMYADMIN
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 80:80
+    environment:
+      MYSQL_USERNAME: 'crlocal'
+      MYSQL_ROOT_PASSWORD: 'dXjw127124dJ'
